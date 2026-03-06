@@ -12,12 +12,13 @@ function getUrlParams() {
     nameA: params.get('playerA') || '玩家 A',
     nameB: params.get('playerB') || '玩家 B',
     mode: params.get('mode') || 'a',
+    matchId: params.get('matchId') || '',
     duration: (rawDuration > 0 && Number.isFinite(rawDuration)) ? rawDuration : DEFAULT_DURATION,
   };
 }
 
 export default function Game({ onBack }) {
-  const { nameA, nameB, duration } = getUrlParams();
+  const { nameA, nameB, matchId, duration } = getUrlParams();
   const [, forceUpdate] = useState(0);
   const [endState, setEndState] = useState(null);
 
@@ -30,7 +31,8 @@ export default function Game({ onBack }) {
 
     try {
       window.parent.postMessage({
-        type: 'gameEnd',
+        type: 'tournamentMatchEnd',
+        matchId,
         scoreA,
         scoreB,
         winner,
@@ -46,7 +48,7 @@ export default function Game({ onBack }) {
         },
       }, '*');
     } catch (e) {}
-  }, []);
+  }, [matchId]);
 
   const { getState, init, startCountdown, moveCannon, shoot } = useGameLoop(duration, handleEnd);
 
