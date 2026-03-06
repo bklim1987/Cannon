@@ -1,4 +1,4 @@
-import { PRIMES, COLS, COLORS, LOCK_DURATION } from '../utils/constants.js';
+import { PRIMES, COLS, COLORS, COMBO_THRESHOLD, LOCK_DURATION } from '../utils/constants.js';
 import GameGrid from './GameGrid.jsx';
 import PrimeButton from './PrimeButton.jsx';
 
@@ -8,6 +8,8 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
   const lockRemaining = player.locked
     ? Math.max(0, (LOCK_DURATION - player.lockAcc) / 1000).toFixed(1)
     : 0;
+
+  const comboActive = player.mult > 1;
 
   const isLeft = side === 'A';
 
@@ -23,6 +25,32 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
       backgroundColor: player.missFlash > 0 ? 'rgba(239,68,68,0.2)' : 'transparent',
       transition: 'background-color 0.15s',
     }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '4px 8px',
+        minHeight: '5%',
+        color: playerColor,
+        fontSize: '14px',
+        fontWeight: 'bold',
+      }}>
+        <span>{name}</span>
+        <span style={{ fontSize: '18px' }}>{player.score}</span>
+        <span style={{ fontSize: '12px' }}>
+          {comboActive ? (
+            <span style={{ color: '#fbbf24', animation: 'pulse 0.5s infinite' }}>
+              x1.5 COMBO!
+            </span>
+          ) : (
+            <span>🔥 {player.combo}/{COMBO_THRESHOLD}</span>
+          )}
+        </span>
+        <span style={{ fontSize: '11px', color: '#9ca3af' }}>
+          击杀: {player.kills}
+        </span>
+      </div>
+
       <GameGrid
         monsters={player.monsters}
         cannon={player.cannon}

@@ -120,33 +120,12 @@ export default function Game({ onBack }) {
     >
       <div style={{
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'center',
-        padding: '4px 8px',
+        alignItems: 'center',
+        padding: '4px 0',
         flexShrink: 0,
-        gap: '12px',
-        fontWeight: 'bold',
-        fontSize: '13px',
       }}>
-        <span style={{ color: COLORS.playerA }}>{nameA}</span>
-        <span style={{ color: COLORS.playerA, fontSize: '18px' }}>{state.playerA.score}</span>
-        <span style={{ color: COLORS.playerA, fontSize: '12px' }}>
-          {state.playerA.mult > 1
-            ? <span style={{ color: '#fbbf24', animation: 'pulse 0.5s infinite' }}>x1.5!</span>
-            : <span>🔥{state.playerA.combo}/10</span>}
-        </span>
-        <span style={{ color: '#9ca3af', fontSize: '11px' }}>击杀:{state.playerA.kills}</span>
-
         <Timer timeLeft={state.timeLeft} />
-
-        <span style={{ color: '#9ca3af', fontSize: '11px' }}>击杀:{state.playerB.kills}</span>
-        <span style={{ color: COLORS.playerB, fontSize: '12px' }}>
-          {state.playerB.mult > 1
-            ? <span style={{ color: '#fbbf24', animation: 'pulse 0.5s infinite' }}>x1.5!</span>
-            : <span>🔥{state.playerB.combo}/10</span>}
-        </span>
-        <span style={{ color: COLORS.playerB, fontSize: '18px' }}>{state.playerB.score}</span>
-        <span style={{ color: COLORS.playerB }}>{nameB}</span>
       </div>
 
       <div style={{
