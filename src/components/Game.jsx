@@ -8,17 +8,18 @@ import Results from './Results.jsx';
 function getUrlParams() {
   const params = new URLSearchParams(window.location.search);
   const rawDuration = parseInt(params.get('duration'));
+  const isTournament = params.get('mode') === 'tournament';
   return {
-    nameA: params.get('playerA') || '玩家 A',
-    nameB: params.get('playerB') || '玩家 B',
-    mode: params.get('mode') || 'a',
+    nameA: params.get('teamA') || params.get('playerA') || '玩家 A',
+    nameB: params.get('teamB') || params.get('playerB') || '玩家 B',
+    isTournament,
     matchId: params.get('matchId') || '',
     duration: (rawDuration > 0 && Number.isFinite(rawDuration)) ? rawDuration : DEFAULT_DURATION,
   };
 }
 
 export default function Game({ onBack }) {
-  const { nameA, nameB, matchId, duration } = getUrlParams();
+  const { nameA, nameB, matchId, isTournament, duration } = getUrlParams();
   const [, forceUpdate] = useState(0);
   const [endState, setEndState] = useState(null);
 
@@ -77,6 +78,7 @@ export default function Game({ onBack }) {
         playerB={endState.playerB}
         nameA={nameA}
         nameB={nameB}
+        isTournament={isTournament}
         onRestart={() => {
           setEndState(null);
           init();

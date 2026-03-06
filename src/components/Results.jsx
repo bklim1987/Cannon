@@ -1,6 +1,6 @@
 import { COLORS } from '../utils/constants.js';
 
-export default function Results({ playerA, playerB, nameA, nameB, onRestart }) {
+export default function Results({ playerA, playerB, nameA, nameB, isTournament, onRestart }) {
   const winner = playerA.score > playerB.score ? 'A'
     : playerB.score > playerA.score ? 'B'
     : 'draw';
@@ -60,29 +60,31 @@ export default function Results({ playerA, playerB, nameA, nameB, onRestart }) {
         ))}
       </div>
 
-      <button
-        onPointerDown={(e) => {
-          e.preventDefault();
-          onRestart();
-        }}
-        style={{
-          padding: '16px 48px',
-          fontSize: '20px',
-          fontWeight: 'bold',
-          backgroundColor: '#fbbf24',
-          color: '#000',
-          border: 'none',
-          borderRadius: '12px',
-          cursor: 'pointer',
-          touchAction: 'manipulation',
-          userSelect: 'none',
-          WebkitUserSelect: 'none',
-          minHeight: '56px',
-          marginTop: '8px',
-        }}
-      >
-        再来一局
-      </button>
+      {!isTournament && (
+        <button
+          onPointerDown={(e) => {
+            e.preventDefault();
+            onRestart();
+          }}
+          style={{
+            padding: '16px 48px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            backgroundColor: '#fbbf24',
+            color: '#000',
+            border: 'none',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            touchAction: 'manipulation',
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+            minHeight: '56px',
+            marginTop: '8px',
+          }}
+        >
+          再来一局
+        </button>
+      )}
     </div>
   );
 }
