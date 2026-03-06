@@ -119,11 +119,12 @@ export default function Game({ onBack }) {
       }}
     >
       <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '4px 0',
-        flexShrink: 0,
+        position: 'absolute',
+        top: '30px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 10,
+        pointerEvents: 'none',
       }}>
         <Timer timeLeft={state.timeLeft} />
       </div>

@@ -4,12 +4,12 @@ export default function Timer({ timeLeft }) {
 
   return (
     <div style={{
-      backgroundColor: 'rgba(0,0,0,0.7)',
-      padding: '4px 24px',
-      borderRadius: '8px',
-      fontSize: '24px',
+      backgroundColor: 'rgba(0,0,0,0.35)',
+      padding: '2px 14px',
+      borderRadius: '6px',
+      fontSize: '15px',
       fontWeight: 'bold',
-      color: isUrgent ? '#ef4444' : '#e5e7eb',
+      color: isUrgent ? '#ef4444' : 'rgba(229,231,235,0.75)',
       fontVariantNumeric: 'tabular-nums',
     }}>
       {seconds}s
