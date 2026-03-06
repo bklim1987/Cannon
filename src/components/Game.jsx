@@ -108,14 +108,31 @@ export default function Game({ onBack }) {
   }
 
   return (
-    <div style={{
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      position: 'relative',
-      backgroundColor: COLORS.bg,
-    }}>
-      <Timer timeLeft={state.timeLeft} />
+    <div
+      onContextMenu={(e) => e.preventDefault()}
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: COLORS.bg,
+      }}
+    >
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '4px 0',
+        flexShrink: 0,
+      }}>
+        <Timer timeLeft={state.timeLeft} />
+      </div>
+
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        minHeight: 0,
+      }}>
 
       <PlayerSide
         player={state.playerA}
@@ -140,6 +157,7 @@ export default function Game({ onBack }) {
         onMove={moveCannon}
         onShoot={shoot}
       />
+      </div>
     </div>
   );
 }

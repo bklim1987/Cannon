@@ -11,6 +11,8 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
 
   const comboActive = player.mult > 1;
 
+  const isLeft = side === 'A';
+
   return (
     <div style={{
       flex: 1,
@@ -18,6 +20,7 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
       flexDirection: 'column',
       height: '100%',
       padding: '4px',
+      paddingBottom: '32px',
       position: 'relative',
       backgroundColor: player.missFlash > 0 ? 'rgba(239,68,68,0.2)' : 'transparent',
       transition: 'background-color 0.15s',
@@ -78,6 +81,8 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
         display: 'flex',
         gap: '4px',
         padding: '4px 0',
+        paddingLeft: isLeft ? '4px' : '20px',
+        paddingRight: isLeft ? '20px' : '4px',
         height: '12%',
         minHeight: '48px',
       }}>
