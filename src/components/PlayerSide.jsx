@@ -81,8 +81,8 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
         display: 'flex',
         gap: '4px',
         padding: '4px 0',
-        paddingLeft: isLeft ? '4px' : '20px',
-        paddingRight: isLeft ? '20px' : '4px',
+        paddingLeft: '20px',
+        paddingRight: '20px',
         height: '12%',
         minHeight: '48px',
       }}>
