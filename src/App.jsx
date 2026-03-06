@@ -1,9 +1,14 @@
-import './App.css'
+import { useState } from 'react';
+import Menu from './components/Menu.jsx';
+import Game from './components/Game.jsx';
+import './App.css';
 
 export default function App() {
-  return (
-    <main>
-      React ⚛️ + Vite ⚡ + Replit
-    </main>
-  )
+  const [screen, setScreen] = useState('menu');
+
+  if (screen === 'game') {
+    return <Game onBack={() => setScreen('menu')} />;
+  }
+
+  return <Menu onStart={() => setScreen('game')} />;
 }
