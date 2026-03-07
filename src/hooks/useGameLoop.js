@@ -20,6 +20,7 @@ function createPlayerState() {
     missed: 0,
     locks: 0,
     missFlash: 0,
+    escapeEffects: [],
   };
 
   const m = createMonster('small', p.monsters);
@@ -107,6 +108,12 @@ export function useGameLoop(duration, onEnd) {
         if (nextRow >= ROWS) {
           p.score -= m.pts;
           p.missed += 1;
+          p.escapeEffects.push({
+            id: Date.now() + Math.random(),
+            col: m.col,
+            pts: m.pts,
+            acc: 0,
+          });
           occupied.delete(`${m.col}-${m.row}`);
           p.monsters.splice(i, 1);
           continue;
@@ -127,6 +134,13 @@ export function useGameLoop(duration, onEnd) {
 
     if (p.missFlash > 0) {
       p.missFlash = Math.max(0, p.missFlash - dt);
+    }
+
+    for (let i = p.escapeEffects.length - 1; i >= 0; i--) {
+      p.escapeEffects[i].acc += dt;
+      if (p.escapeEffects[i].acc >= 800) {
+        p.escapeEffects.splice(i, 1);
+      }
     }
   }
 

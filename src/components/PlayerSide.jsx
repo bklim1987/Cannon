@@ -136,6 +136,7 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
         onColumnClick={(col) => onMove(side, col)}
         projectiles={projectiles}
         onProjectileDone={removeProjectile}
+        escapeEffects={player.escapeEffects}
       />
 
       <div style={{

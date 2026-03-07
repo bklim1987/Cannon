@@ -3,7 +3,7 @@ import { COLS, ROWS, COLORS } from '../utils/constants.js';
 import MonsterCell from './MonsterCell.jsx';
 import Projectile from './Projectile.jsx';
 
-const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, playerColor, onColumnClick, projectiles, onProjectileDone }, ref) {
+const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, playerColor, onColumnClick, projectiles, onProjectileDone, escapeEffects }, ref) {
   const containerRef = useRef(null);
   const [dims, setDims] = useState({ w: 0, h: 0 });
 
@@ -99,6 +99,44 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
       {dims.w > 0 && projectiles && projectiles.map(p => (
         <Projectile key={p.id} proj={p} onDone={onProjectileDone} />
       ))}
+
+      {dims.w > 0 && escapeEffects && escapeEffects.map(e => {
+        const progress = Math.min(e.acc / 800, 1);
+        return (
+          <div
+            key={e.id}
+            style={{
+              position: 'absolute',
+              left: e.col * cellW,
+              bottom: 0,
+              width: cellW,
+              height: cellH,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none',
+              zIndex: 10,
+            }}
+          >
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundColor: 'rgba(239,68,68,0.4)',
+              opacity: 1 - progress,
+            }} />
+            <div style={{
+              fontSize: '16px',
+              fontWeight: 'bold',
+              color: '#ef4444',
+              opacity: 1 - progress,
+              transform: `translateY(${-progress * 20}px)`,
+              textShadow: '0 0 6px rgba(239,68,68,0.8)',
+            }}>
+              -{e.pts}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 });
