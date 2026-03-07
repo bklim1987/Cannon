@@ -2,6 +2,7 @@ let ctx = null;
 
 function getCtx() {
   if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+  if (ctx.state === 'suspended') ctx.resume().catch(() => {});
   return ctx;
 }
 
@@ -59,4 +60,13 @@ export function playKill(side, isBoss = false) {
   if (isBoss) {
     playToneAt(1000 * pitch, 0.08, 'sine', 0.3, pan, t + 0.16);
   }
+}
+
+export function playVictory() {
+  const c = getCtx();
+  const t = c.currentTime;
+  const notes = [523, 659, 784, 1047];
+  notes.forEach((freq, i) => {
+    playToneAt(freq, 0.15, 'sine', 0.2, 0, t + i * 0.12);
+  });
 }

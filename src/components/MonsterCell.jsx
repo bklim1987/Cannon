@@ -1,11 +1,23 @@
 import { MONSTER_TYPES } from '../utils/constants.js';
 
-function getFontSize(value) {
+function getFontSize(value, type) {
   const digits = String(value).length;
-  if (digits <= 2) return '17px';
-  if (digits === 3) return '13px';
-  if (digits === 4) return '11px';
-  return '9px';
+  if (type === 'boss') {
+    if (digits <= 2) return '22px';
+    if (digits === 3) return '17px';
+    if (digits === 4) return '14px';
+    return '11px';
+  }
+  if (type === 'big') {
+    if (digits <= 2) return '20px';
+    if (digits === 3) return '16px';
+    if (digits === 4) return '13px';
+    return '10px';
+  }
+  if (digits <= 2) return '19px';
+  if (digits === 3) return '15px';
+  if (digits === 4) return '12px';
+  return '10px';
 }
 
 function SmallMonster({ monster, config, isFlashing, isDying }) {
@@ -17,7 +29,6 @@ function SmallMonster({ monster, config, isFlashing, isDying }) {
       backgroundColor: isDying ? '#fbbf24' : isFlashing ? '#fbbf24' : config.color.bg,
       border: `2px solid ${isDying ? '#fbbf24' : config.color.border}`,
       display: 'flex',
-      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       position: 'relative',
@@ -43,19 +54,8 @@ function SmallMonster({ monster, config, isFlashing, isDying }) {
         backgroundColor: config.color.border,
       }} />
 
-      {!isDying && (
-        <div style={{
-          display: 'flex',
-          gap: '4px',
-          marginBottom: '1px',
-        }}>
-          <div style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#fff' }} />
-          <div style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#fff' }} />
-        </div>
-      )}
-
       <div style={{
-        fontSize: getFontSize(monster.value),
+        fontSize: getFontSize(monster.value, 'small'),
         fontWeight: 'bold',
         color: isDying ? '#000' : isFlashing ? '#000' : config.color.text,
         lineHeight: 1,
@@ -75,7 +75,6 @@ function BigMonster({ monster, config, isFlashing, isDying }) {
       backgroundColor: isDying ? '#fbbf24' : isFlashing ? '#fbbf24' : config.color.bg,
       border: `2px solid ${isDying ? '#fbbf24' : config.color.border}`,
       display: 'flex',
-      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       position: 'relative',
@@ -104,7 +103,7 @@ function BigMonster({ monster, config, isFlashing, isDying }) {
       }} />
 
       <div style={{
-        fontSize: getFontSize(monster.value),
+        fontSize: getFontSize(monster.value, 'big'),
         fontWeight: 'bold',
         color: isDying ? '#000' : isFlashing ? '#000' : config.color.text,
         lineHeight: 1.1,
@@ -124,13 +123,12 @@ function BossMonster({ monster, config, isFlashing, isDying }) {
       backgroundColor: isDying ? '#fbbf24' : isFlashing ? '#fbbf24' : config.color.bg,
       border: `2px solid ${isDying ? '#fbbf24' : config.color.border}`,
       display: 'flex',
-      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       position: 'relative',
       animation: isDying
         ? 'killFlash 400ms ease-out forwards'
-        : 'bossPulse 1.5s ease-in-out infinite',
+        : 'bossFlicker 0.8s step-end infinite',
       transition: isDying ? 'none' : 'background-color 0.1s',
     }}>
       <div style={{
@@ -165,50 +163,14 @@ function BossMonster({ monster, config, isFlashing, isDying }) {
         borderBottom: `10px solid ${config.color.border}`,
       }} />
 
-      {!isDying && (
-        <div style={{
-          display: 'flex',
-          gap: '6px',
-          marginBottom: '1px',
-        }}>
-          <div style={{
-            width: '5px',
-            height: '5px',
-            borderRadius: '50%',
-            backgroundColor: '#fca5a5',
-            boxShadow: '0 0 4px rgba(239,68,68,0.8)',
-          }} />
-          <div style={{
-            width: '5px',
-            height: '5px',
-            borderRadius: '50%',
-            backgroundColor: '#fca5a5',
-            boxShadow: '0 0 4px rgba(239,68,68,0.8)',
-          }} />
-        </div>
-      )}
-
       <div style={{
-        fontSize: getFontSize(monster.value),
+        fontSize: getFontSize(monster.value, 'boss'),
         fontWeight: 'bold',
         color: isDying ? '#000' : isFlashing ? '#000' : config.color.text,
         lineHeight: 1.1,
       }}>
         {isDying ? '' : monster.value}
       </div>
-
-      {!isDying && (
-        <div style={{
-          fontSize: '7px',
-          fontWeight: 'bold',
-          color: config.color.text,
-          lineHeight: 1,
-          marginTop: '1px',
-          letterSpacing: '1px',
-        }}>
-          BOSS
-        </div>
-      )}
     </div>
   );
 }

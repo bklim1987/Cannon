@@ -44,3 +44,13 @@ body {
   0%, 100% { box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
   50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
 }
+
+@keyframes bossFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes winnerPulse {
+  0%, 100% { box-shadow: 0 0 6px currentColor; }
+  50% { box-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+}
