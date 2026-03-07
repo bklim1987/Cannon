@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Menu from './components/Menu.jsx';
 import Game from './components/Game.jsx';
+import SoloGame from './components/SoloGame.jsx';
+import Leaderboard from './components/Leaderboard.jsx';
 import './App.css';
 
 function isTournamentMode() {
@@ -15,5 +17,19 @@ export default function App() {
     return <Game onBack={() => setScreen('menu')} />;
   }
 
-  return <Menu onStart={() => setScreen('game')} />;
+  if (screen === 'solo') {
+    return <SoloGame onBack={() => setScreen('menu')} />;
+  }
+
+  if (screen === 'leaderboard') {
+    return <Leaderboard onBack={() => setScreen('menu')} />;
+  }
+
+  return (
+    <Menu
+      onStartSolo={() => setScreen('solo')}
+      onStartDuo={() => setScreen('game')}
+      onLeaderboard={() => setScreen('leaderboard')}
+    />
+  );
 }

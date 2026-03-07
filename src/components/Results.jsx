@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { COLORS } from '../utils/constants.js';
 import { playVictory } from '../utils/sounds.js';
+import { saveScore } from '../utils/scores.js';
 
-export default function Results({ playerA, playerB, nameA, nameB, isTournament, onRestart }) {
+export default function Results({ playerA, playerB, nameA, nameB, isTournament, onRestart, onBack }) {
   const winner = playerA.score > playerB.score ? 'A'
     : playerB.score > playerA.score ? 'B'
     : 'draw';
@@ -12,6 +13,20 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
     if (!played.current) {
       played.current = true;
       playVictory();
+      if (!isTournament) {
+        const resultA = winner === 'A' ? 'win' : winner === 'B' ? 'lose' : 'draw';
+        const resultB = winner === 'B' ? 'win' : winner === 'A' ? 'lose' : 'draw';
+        saveScore({
+          mode: 'duo', name: nameA, score: playerA.score,
+          kills: playerA.kills, maxCombo: playerA.maxCombo,
+          missed: playerA.missed, locks: playerA.locks, result: resultA,
+        });
+        saveScore({
+          mode: 'duo', name: nameB, score: playerB.score,
+          kills: playerB.kills, maxCombo: playerB.maxCombo,
+          missed: playerB.missed, locks: playerB.locks, result: resultB,
+        });
+      }
     }
   }, []);
 
@@ -76,29 +91,48 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
       </div>
 
       {!isTournament && (
-        <button
-          onPointerDown={(e) => {
-            e.preventDefault();
-            onRestart();
-          }}
-          style={{
-            padding: '16px 48px',
-            fontSize: '20px',
-            fontWeight: 'bold',
-            backgroundColor: '#fbbf24',
-            color: '#000',
-            border: 'none',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            touchAction: 'manipulation',
-            userSelect: 'none',
-            WebkitUserSelect: 'none',
-            minHeight: '56px',
-            marginTop: '8px',
-          }}
-        >
-          再来一局
-        </button>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <button
+            onPointerDown={(e) => { e.preventDefault(); onRestart(); }}
+            style={{
+              padding: '16px 48px',
+              fontSize: '20px',
+              fontWeight: 'bold',
+              backgroundColor: '#fbbf24',
+              color: '#000',
+              border: 'none',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              touchAction: 'manipulation',
+              userSelect: 'none',
+              WebkitUserSelect: 'none',
+              minHeight: '56px',
+            }}
+          >
+            再来一局
+          </button>
+          {onBack && (
+            <button
+              onPointerDown={(e) => { e.preventDefault(); onBack(); }}
+              style={{
+                padding: '16px 48px',
+                fontSize: '20px',
+                fontWeight: 'bold',
+                backgroundColor: 'transparent',
+                color: '#9ca3af',
+                border: '2px solid #374151',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                touchAction: 'manipulation',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                minHeight: '56px',
+              }}
+            >
+              返回主页
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

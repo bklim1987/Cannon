@@ -133,7 +133,21 @@ function PreviewBoss({ config }) {
   );
 }
 
-export default function Menu({ onStart }) {
+const btnBase = {
+  padding: '16px 48px',
+  fontSize: '20px',
+  fontWeight: 'bold',
+  border: 'none',
+  borderRadius: '12px',
+  cursor: 'pointer',
+  touchAction: 'manipulation',
+  userSelect: 'none',
+  WebkitUserSelect: 'none',
+  minHeight: '56px',
+  minWidth: '200px',
+};
+
+export default function Menu({ onStartSolo, onStartDuo, onLeaderboard }) {
   return (
     <div style={{
       width: '100%',
@@ -145,7 +159,7 @@ export default function Menu({ onStart }) {
       backgroundColor: COLORS.bg,
       color: '#e5e7eb',
       padding: '20px',
-      gap: '24px',
+      gap: '20px',
     }}>
       <h1 style={{ fontSize: '48px', fontWeight: 'bold', color: '#fbbf24' }}>
         数字大炮
@@ -196,27 +210,44 @@ export default function Menu({ onStart }) {
         })}
       </div>
 
+      <div style={{
+        display: 'flex',
+        gap: '12px',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+      }}>
+        <button
+          onPointerDown={(e) => { e.preventDefault(); onStartSolo(); }}
+          style={{ ...btnBase, backgroundColor: COLORS.playerA, color: '#000' }}
+        >
+          单人挑战
+        </button>
+        <button
+          onPointerDown={(e) => { e.preventDefault(); onStartDuo(); }}
+          style={{ ...btnBase, backgroundColor: '#fbbf24', color: '#000' }}
+        >
+          双人对战
+        </button>
+      </div>
+
       <button
-        onPointerDown={(e) => {
-          e.preventDefault();
-          onStart();
-        }}
+        onPointerDown={(e) => { e.preventDefault(); onLeaderboard(); }}
         style={{
-          padding: '16px 48px',
-          fontSize: '20px',
+          padding: '10px 32px',
+          fontSize: '16px',
           fontWeight: 'bold',
-          backgroundColor: '#fbbf24',
-          color: '#000',
-          border: 'none',
-          borderRadius: '12px',
+          backgroundColor: 'transparent',
+          color: '#9ca3af',
+          border: '2px solid #374151',
+          borderRadius: '10px',
           cursor: 'pointer',
           touchAction: 'manipulation',
           userSelect: 'none',
           WebkitUserSelect: 'none',
-          minHeight: '56px',
+          minHeight: '44px',
         }}
       >
-        开始对战
+        排行榜
       </button>
     </div>
   );

@@ -84,6 +84,7 @@ export default function Game({ onBack }) {
           init();
           startCountdown();
         }}
+        onBack={onBack}
       />
     );
   }
