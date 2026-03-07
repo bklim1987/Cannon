@@ -1,47 +1,49 @@
+import { useRef, useState, useEffect } from 'react';
 import { COLS, ROWS, COLORS } from '../utils/constants.js';
 import MonsterCell from './MonsterCell.jsx';
 
 export default function GameGrid({ monsters, cannon, locked, playerColor, onColumnClick }) {
-  const monsterMap = {};
-  for (const m of monsters) {
-    const key = `${m.col}-${m.row}`;
-    if (!monsterMap[key] || m.row > monsterMap[key].row) {
-      monsterMap[key] = m;
+  const containerRef = useRef(null);
+  const [dims, setDims] = useState({ w: 0, h: 0 });
+
+  useEffect(() => {
+    function measure() {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setDims({ w: rect.width, h: rect.height });
+      }
     }
-  }
+    measure();
+    const obs = new ResizeObserver(measure);
+    if (containerRef.current) obs.observe(containerRef.current);
+    return () => obs.disconnect();
+  }, []);
+
+  const cellW = dims.w / COLS;
+  const cellH = dims.h / ROWS;
 
   const rows = [];
   for (let r = 0; r < ROWS; r++) {
     const cells = [];
     for (let c = 0; c < COLS; c++) {
-      const key = `${c}-${r}`;
-      const monster = monsterMap[key];
       const isCannonCol = c === cannon;
-
       cells.push(
         <div
-          key={key}
+          key={`${c}-${r}`}
           onPointerDown={(e) => {
             e.preventDefault();
             if (!locked) onColumnClick(c);
           }}
           style={{
             flex: 1,
-            aspectRatio: 'auto',
             backgroundColor: isCannonCol
               ? (playerColor === COLORS.playerA ? 'rgba(56,189,248,0.12)' : 'rgba(244,114,182,0.12)')
               : COLORS.cellBg,
             border: `1px solid ${COLORS.cellBorder}`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
             touchAction: 'manipulation',
             cursor: locked ? 'not-allowed' : 'pointer',
-            padding: '1px',
           }}
-        >
-          {monster && <MonsterCell monster={monster} />}
-        </div>
+        />
       );
     }
     rows.push(
@@ -52,15 +54,38 @@ export default function GameGrid({ monsters, cannon, locked, playerColor, onColu
   }
 
   return (
-    <div style={{
-      flex: 1,
-      display: 'flex',
-      flexDirection: 'column',
-      backgroundColor: COLORS.gridBg,
-      borderRadius: '4px',
-      overflow: 'hidden',
-    }}>
+    <div
+      ref={containerRef}
+      style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: COLORS.gridBg,
+        borderRadius: '4px',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
       {rows}
+
+      {dims.w > 0 && monsters.map(m => (
+        <div
+          key={m.id}
+          style={{
+            position: 'absolute',
+            left: m.col * cellW,
+            top: m.row * cellH,
+            width: cellW,
+            height: cellH,
+            transition: 'top 300ms ease-out',
+            padding: '1px',
+            pointerEvents: 'none',
+            zIndex: m.dying ? 5 : 1,
+          }}
+        >
+          <MonsterCell monster={m} />
+        </div>
+      ))}
     </div>
   );
 }

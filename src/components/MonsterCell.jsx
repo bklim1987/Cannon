@@ -13,6 +13,7 @@ export default function MonsterCell({ monster }) {
 
   const config = MONSTER_TYPES[monster.type];
   const isFlashing = monster.hitFlash > 0;
+  const isDying = monster.dying;
 
   return (
     <div style={{
@@ -22,14 +23,17 @@ export default function MonsterCell({ monster }) {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: isFlashing ? '#fbbf24' : config.color.bg,
-      border: `2px solid ${config.color.border}`,
+      backgroundColor: isDying ? '#fbbf24' : isFlashing ? '#fbbf24' : config.color.bg,
+      border: `2px solid ${isDying ? '#fbbf24' : config.color.border}`,
       borderRadius: '6px',
-      transition: 'background-color 0.1s',
-      boxShadow: monster.type === 'boss' ? `0 0 12px ${config.color.border}` : 'none',
+      boxShadow: isDying
+        ? '0 0 20px rgba(251,191,36,0.8)'
+        : monster.type === 'boss' ? `0 0 12px ${config.color.border}` : 'none',
       position: 'relative',
+      animation: isDying ? 'killFlash 400ms ease-out forwards' : 'none',
+      transition: isDying ? 'none' : 'background-color 0.1s',
     }}>
-      {config.label && (
+      {config.label && !isDying && (
         <div style={{
           fontSize: '8px',
           fontWeight: 'bold',
@@ -43,10 +47,10 @@ export default function MonsterCell({ monster }) {
       <div style={{
         fontSize: getFontSize(monster.value),
         fontWeight: 'bold',
-        color: isFlashing ? '#000' : config.color.text,
+        color: isDying ? '#000' : isFlashing ? '#000' : config.color.text,
         lineHeight: 1.1,
       }}>
-        {monster.value}
+        {isDying ? '' : monster.value}
       </div>
     </div>
   );

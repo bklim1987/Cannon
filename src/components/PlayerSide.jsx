@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { PRIMES, COLS, COLORS, COMBO_THRESHOLD, LOCK_DURATION } from '../utils/constants.js';
 import GameGrid from './GameGrid.jsx';
 import PrimeButton from './PrimeButton.jsx';
@@ -10,8 +11,11 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
     : 0;
 
   const comboActive = player.mult > 1;
-
-  const isLeft = side === 'A';
+  const prevComboRef = useRef(0);
+  const comboJustActivated = comboActive && prevComboRef.current < COMBO_THRESHOLD;
+  if (player.combo !== prevComboRef.current) {
+    prevComboRef.current = player.combo;
+  }
 
   return (
     <div style={{
@@ -25,6 +29,20 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
       backgroundColor: player.missFlash > 0 ? 'rgba(239,68,68,0.2)' : 'transparent',
       transition: 'background-color 0.15s',
     }}>
+      {comboJustActivated && (
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '40px',
+          background: 'linear-gradient(180deg, rgba(251,191,36,0.6) 0%, transparent 100%)',
+          animation: 'comboActivate 200ms ease-out forwards',
+          pointerEvents: 'none',
+          zIndex: 5,
+        }} />
+      )}
+
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -36,14 +54,29 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
         fontWeight: 'bold',
       }}>
         <span>{name}</span>
-        <span style={{ fontSize: '18px' }}>{player.score}</span>
+        <span style={{
+          fontSize: '18px',
+          color: comboActive ? '#fbbf24' : playerColor,
+          textShadow: comboActive ? '0 0 12px rgba(251,191,36,0.8)' : 'none',
+          transition: 'color 0.2s, text-shadow 0.2s',
+        }}>
+          {player.score}
+        </span>
         <span style={{ fontSize: '12px' }}>
           {comboActive ? (
             <span style={{ color: '#fbbf24', animation: 'pulse 0.5s infinite' }}>
               x1.5 COMBO!
             </span>
           ) : (
-            <span>🔥 {player.combo}/{COMBO_THRESHOLD}</span>
+            <span
+              key={player.combo}
+              style={{
+                display: 'inline-block',
+                animation: player.combo > 0 ? 'bump 150ms ease-out' : 'none',
+              }}
+            >
+              🔥 {player.combo}/{COMBO_THRESHOLD}
+            </span>
           )}
         </span>
         <span style={{ fontSize: '11px', color: '#9ca3af' }}>

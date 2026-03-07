@@ -74,7 +74,7 @@ export function useGameLoop(duration, onEnd) {
       p.spawnAcc -= SPAWN_INTERVAL;
       const topOccupied = new Set();
       for (const m of p.monsters) {
-        if (m.row === 0) topOccupied.add(m.col);
+        if (m.row === 0 && !m.dying) topOccupied.add(m.col);
       }
       if (topOccupied.size < COLS) {
         const monster = createMonster('small', p.monsters);
@@ -82,13 +82,25 @@ export function useGameLoop(duration, onEnd) {
       }
     }
 
+    for (let i = p.monsters.length - 1; i >= 0; i--) {
+      const m = p.monsters[i];
+      if (m.dying) {
+        m.dyingAcc += dt;
+        if (m.dyingAcc >= 400) {
+          p.monsters.splice(i, 1);
+        }
+        continue;
+      }
+    }
+
     const occupied = new Set();
     for (const m of p.monsters) {
-      occupied.add(`${m.col}-${m.row}`);
+      if (!m.dying) occupied.add(`${m.col}-${m.row}`);
     }
 
     for (let i = p.monsters.length - 1; i >= 0; i--) {
       const m = p.monsters[i];
+      if (m.dying) continue;
       m.fallAcc += dt;
       if (m.fallAcc >= m.fallMs) {
         m.fallAcc -= m.fallMs;
@@ -169,7 +181,7 @@ export function useGameLoop(duration, onEnd) {
     const p = side === 'A' ? s.playerA : s.playerB;
     if (p.locked) return;
 
-    const monstersInCol = p.monsters.filter(m => m.col === p.cannon);
+    const monstersInCol = p.monsters.filter(m => m.col === p.cannon && !m.dying);
     if (monstersInCol.length === 0) return;
 
     monstersInCol.sort((a, b) => b.row - a.row);
@@ -188,7 +200,8 @@ export function useGameLoop(duration, onEnd) {
         const earned = Math.round(target.pts * p.mult);
         p.score += earned;
         p.kills += 1;
-        p.monsters = p.monsters.filter(m => m.id !== target.id);
+        target.dying = true;
+        target.dyingAcc = 0;
 
         if (p.kills >= p.nextBossAt) {
           p.nextBossAt += 10;
