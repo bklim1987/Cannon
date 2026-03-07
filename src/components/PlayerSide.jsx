@@ -141,47 +141,19 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
       <div style={{
         display: 'flex',
         justifyContent: 'center',
-        height: '5%',
-        alignItems: 'flex-end',
+        height: '3%',
+        alignItems: 'center',
       }}>
-        {Array.from({ length: COLS }).map((_, c) => {
-          const active = c === player.cannon;
-          return (
-            <div key={c} style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              visibility: active ? 'visible' : 'hidden',
-            }}>
-              <div style={{
-                width: '8px',
-                height: '14px',
-                backgroundColor: playerColor,
-                borderRadius: '3px 3px 0 0',
-              }} />
-              <div style={{
-                width: '20px',
-                height: '10px',
-                backgroundColor: playerColor,
-                borderRadius: '4px 4px 2px 2px',
-                position: 'relative',
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  left: '-4px',
-                  bottom: '0',
-                  width: '28px',
-                  height: '5px',
-                  backgroundColor: playerColor,
-                  borderRadius: '2px',
-                  opacity: 0.7,
-                }} />
-              </div>
-            </div>
-          );
-        })}
+        {Array.from({ length: COLS }).map((_, c) => (
+          <div key={c} style={{
+            flex: 1,
+            textAlign: 'center',
+            fontSize: '14px',
+            color: c === player.cannon ? playerColor : 'transparent',
+          }}>
+            ▲
+          </div>
+        ))}
       </div>
 
       <div style={{
