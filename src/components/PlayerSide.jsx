@@ -1,10 +1,13 @@
-import { useRef } from 'react';
-import { PRIMES, COLS, COLORS, COMBO_THRESHOLD, LOCK_DURATION } from '../utils/constants.js';
+import { useRef, useState, useCallback } from 'react';
+import { PRIMES, COLS, ROWS, COLORS, COMBO_THRESHOLD, LOCK_DURATION } from '../utils/constants.js';
 import GameGrid from './GameGrid.jsx';
 import PrimeButton from './PrimeButton.jsx';
 
 export default function PlayerSide({ player, name, side, playerColor, onMove, onShoot }) {
   if (!player) return null;
+
+  const [projectiles, setProjectiles] = useState([]);
+  const gridRef = useRef(null);
 
   const lockRemaining = player.locked
     ? Math.max(0, (LOCK_DURATION - player.lockAcc) / 1000).toFixed(1)
@@ -16,6 +19,46 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
   if (player.combo !== prevComboRef.current) {
     prevComboRef.current = player.combo;
   }
+
+  const handleShoot = useCallback((prime) => {
+    onShoot(side, prime);
+
+    const gridEl = gridRef.current;
+    if (!gridEl) return;
+    const rect = gridEl.getBoundingClientRect();
+    const cellW = rect.width / COLS;
+    const cellH = rect.height / ROWS;
+
+    const col = player.cannon;
+    const startX = (col + 0.5) * cellW;
+    const startY = rect.height;
+
+    const monstersInCol = player.monsters.filter(m => m.col === col && !m.dying);
+    let endY, hit;
+    if (monstersInCol.length > 0) {
+      monstersInCol.sort((a, b) => b.row - a.row);
+      const target = monstersInCol[0];
+      endY = (target.row + 0.5) * cellH;
+      hit = target.value % prime === 0;
+    } else {
+      endY = 0;
+      hit = true;
+    }
+
+    setProjectiles(prev => [...prev, {
+      id: Date.now() + Math.random(),
+      prime,
+      startX,
+      startY,
+      endX: startX,
+      endY,
+      hit,
+    }]);
+  }, [side, onShoot, player.cannon, player.monsters]);
+
+  const removeProjectile = useCallback((id) => {
+    setProjectiles(prev => prev.filter(p => p.id !== id));
+  }, []);
 
   return (
     <div style={{
@@ -85,11 +128,14 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
       </div>
 
       <GameGrid
+        ref={gridRef}
         monsters={player.monsters}
         cannon={player.cannon}
         locked={player.locked}
         playerColor={playerColor}
         onColumnClick={(col) => onMove(side, col)}
+        projectiles={projectiles}
+        onProjectileDone={removeProjectile}
       />
 
       <div style={{
@@ -125,7 +171,7 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
             prime={p}
             disabled={player.locked}
             playerColor={playerColor}
-            onFire={(prime) => onShoot(side, prime)}
+            onFire={handleShoot}
           />
         ))}
       </div>

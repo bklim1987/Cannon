@@ -1,8 +1,9 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, forwardRef } from 'react';
 import { COLS, ROWS, COLORS } from '../utils/constants.js';
 import MonsterCell from './MonsterCell.jsx';
+import Projectile from './Projectile.jsx';
 
-export default function GameGrid({ monsters, cannon, locked, playerColor, onColumnClick }) {
+const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, playerColor, onColumnClick, projectiles, onProjectileDone }, ref) {
   const containerRef = useRef(null);
   const [dims, setDims] = useState({ w: 0, h: 0 });
 
@@ -53,9 +54,17 @@ export default function GameGrid({ monsters, cannon, locked, playerColor, onColu
     );
   }
 
+  function setRefs(el) {
+    containerRef.current = el;
+    if (ref) {
+      if (typeof ref === 'function') ref(el);
+      else ref.current = el;
+    }
+  }
+
   return (
     <div
-      ref={containerRef}
+      ref={setRefs}
       style={{
         flex: 1,
         display: 'flex',
@@ -86,6 +95,12 @@ export default function GameGrid({ monsters, cannon, locked, playerColor, onColu
           <MonsterCell monster={m} />
         </div>
       ))}
+
+      {dims.w > 0 && projectiles && projectiles.map(p => (
+        <Projectile key={p.id} proj={p} onDone={onProjectileDone} />
+      ))}
     </div>
   );
-}
+});
+
+export default GameGrid;
