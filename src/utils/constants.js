@@ -22,5 +22,5 @@ export const COLORS = {
   cellBg: '#1a2234',
   cellBorder: '#263040',
   playerA: '#38bdf8',
-  playerB: '#f472b6',
+  playerB: '#c084fc',
 };

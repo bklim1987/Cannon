@@ -38,7 +38,7 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
           style={{
             flex: 1,
             backgroundColor: isCannonCol
-              ? (playerColor === COLORS.playerA ? 'rgba(56,189,248,0.12)' : 'rgba(244,114,182,0.12)')
+              ? (playerColor === COLORS.playerA ? 'rgba(56,189,248,0.12)' : 'rgba(192,132,252,0.12)')
               : COLORS.cellBg,
             border: `1px solid ${COLORS.cellBorder}`,
             touchAction: 'manipulation',
