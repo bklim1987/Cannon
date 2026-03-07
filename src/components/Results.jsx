@@ -68,7 +68,7 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
                 <div>击杀: {player.kills}</div>
                 <div>最高连击: {player.maxCombo}</div>
                 <div>漏掉: {player.missed}</div>
-                <div>锁定次数: {player.locks}</div>
+                <div>射错: {player.locks}</div>
               </div>
             </div>
           );
