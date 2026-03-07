@@ -6,7 +6,7 @@ function getCtx() {
 }
 
 function getPan(side) {
-  return side === 'A' ? -0.7 : 0.7;
+  return side === 'A' ? -0.9 : 0.9;
 }
 
 function getPitch(side) {
