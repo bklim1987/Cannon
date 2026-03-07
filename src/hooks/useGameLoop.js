@@ -21,10 +21,8 @@ function createPlayerState() {
     missFlash: 0,
   };
 
-  for (let i = 0; i < 2; i++) {
-    const m = createMonster('small', p.monsters);
-    p.monsters.push(m);
-  }
+  const m = createMonster('small', p.monsters);
+  p.monsters.push(m);
 
   return p;
 }
