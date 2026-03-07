@@ -3,7 +3,7 @@ import { TICK_MS, ROWS, COLS, SPAWN_INTERVAL, LOCK_DURATION, COMBO_THRESHOLD, CO
 import { createMonster } from '../utils/monsters.js';
 
 function createPlayerState() {
-  return {
+  const p = {
     score: 0,
     monsters: [],
     cannon: 2,
@@ -20,6 +20,13 @@ function createPlayerState() {
     locks: 0,
     missFlash: 0,
   };
+
+  for (let i = 0; i < 2; i++) {
+    const m = createMonster('small', p.monsters);
+    p.monsters.push(m);
+  }
+
+  return p;
 }
 
 export function useGameLoop(duration, onEnd) {
