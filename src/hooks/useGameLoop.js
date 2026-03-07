@@ -1,6 +1,7 @@
 import { useRef, useEffect, useCallback } from 'react';
 import { TICK_MS, ROWS, COLS, SPAWN_INTERVAL, LOCK_DURATION, COMBO_THRESHOLD, COMBO_MULTIPLIER, MONSTER_TYPES } from '../utils/constants.js';
 import { createMonster } from '../utils/monsters.js';
+import { playHit, playMiss, playKill } from '../utils/sounds.js';
 
 function createPlayerState() {
   const p = {
@@ -200,6 +201,7 @@ export function useGameLoop(duration, onEnd) {
         p.kills += 1;
         target.dying = true;
         target.dyingAcc = 0;
+        playKill(side, target.type === 'boss');
 
         if (p.kills >= p.nextBossAt) {
           p.nextBossAt += 10;
@@ -211,6 +213,8 @@ export function useGameLoop(duration, onEnd) {
           const big = createMonster('big', p.monsters);
           p.monsters.push(big);
         }
+      } else {
+        playHit(side);
       }
     } else {
       p.locked = true;
@@ -219,6 +223,7 @@ export function useGameLoop(duration, onEnd) {
       p.mult = 1;
       p.locks += 1;
       p.missFlash = 500;
+      playMiss(side);
     }
   }, []);
 

@@ -1,0 +1,180 @@
+# P2 视觉打磨 — 第三批：音效系统（精简版）
+
+## 目标
+
+为双人同屏游戏添加**最少量的关键音效**，用左右声道和音高区分两位玩家。使用 Web Audio API 程序化生成，不引入音频文件。**不改变任何游戏逻辑、计分规则或 postMessage 协议。**
+
+## 设计原则
+
+双人同时操作时，每秒可能有 4-6 个音效事件。音效种类太多会变成噪音，比没有音效更糟。因此：
+
+- **只做 3 种音效**：命中、射错、击杀
+- **左右声道分离**：玩家 A（左侧屏幕）音效偏左声道，玩家 B 偏右声道
+- **音高区分**：玩家 A 音高稍高，玩家 B 音高稍低
+- 其他事件（倒计时、怪物到底、连击激活、游戏开始/结束）依靠已有的视觉反馈，不加音效
+
+---
+
+## 新增文件 `src/utils/sounds.js`
+
+### AudioContext 初始化
+
+```js
+let ctx = null;
+
+function getCtx() {
+  if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+  return ctx;
+}
+```
+
+### 声道控制
+
+每个音效函数接收 `side` 参数（"A" 或 "B"），用 StereoPannerNode 控制声道：
+- 玩家 A：pan = -0.7（偏左）
+- 玩家 B：pan = 0.7（偏右）
+
+### 音高控制
+
+每个音效有基础频率，根据 side 做偏移：
+- 玩家 A：基础频率 × 1.15（稍高）
+- 玩家 B：基础频率 × 0.85（稍低）
+
+这样同一种音效，两位玩家听起来音色不同、方位不同。
+
+---
+
+## 音效清单（共 3 种）
+
+### 1. 命中 `playHit(side)`
+- 最频繁的音效，必须很短很轻
+- 正弦波，基础频率 600Hz，持续 60ms，快速衰减
+- 音量：0.15（很轻，只是一个"叮"的确认）
+
+### 2. 射错 `playMiss(side)`
+- 低沉短促的负反馈
+- 方波（square），基础频率 150Hz，持续 150ms
+- 音量：0.2
+
+### 3. 击杀 `playKill(side, isBoss)`
+- 两个快速上升音（简短的两音上行），表示消灭
+- 正弦波，基础频率 500Hz → 750Hz，每个 50ms，间隔 30ms
+- Boss 击杀时在同样的两音后追加第三个更高音（1000Hz），总时长多 80ms
+- 音量：0.25
+
+---
+
+## 完整实现参考
+
+```js
+let ctx = null;
+
+function getCtx() {
+  if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+  return ctx;
+}
+
+function getPan(side) {
+  return side === 'A' ? -0.7 : 0.7;
+}
+
+function getPitch(side) {
+  return side === 'A' ? 1.15 : 0.85;
+}
+
+function playToneAt(freq, duration, type, volume, pan, startTime) {
+  const c = getCtx();
+  const osc = c.createOscillator();
+  const gain = c.createGain();
+  const panner = c.createStereoPanner();
+
+  osc.type = type;
+  osc.frequency.value = freq;
+  panner.pan.value = pan;
+  gain.gain.setValueAtTime(volume, startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+  osc.connect(gain);
+  gain.connect(panner);
+  panner.connect(c.destination);
+
+  osc.start(startTime);
+  osc.stop(startTime + duration);
+}
+
+export function playHit(side) {
+  const c = getCtx();
+  const pan = getPan(side);
+  const pitch = getPitch(side);
+  playToneAt(600 * pitch, 0.06, 'sine', 0.15, pan, c.currentTime);
+}
+
+export function playMiss(side) {
+  const c = getCtx();
+  const pan = getPan(side);
+  const pitch = getPitch(side);
+  playToneAt(150 * pitch, 0.15, 'square', 0.2, pan, c.currentTime);
+}
+
+export function playKill(side, isBoss = false) {
+  const c = getCtx();
+  const pan = getPan(side);
+  const pitch = getPitch(side);
+  const t = c.currentTime;
+
+  playToneAt(500 * pitch, 0.05, 'sine', 0.25, pan, t);
+  playToneAt(750 * pitch, 0.05, 'sine', 0.25, pan, t + 0.08);
+
+  if (isBoss) {
+    playToneAt(1000 * pitch, 0.08, 'sine', 0.3, pan, t + 0.16);
+  }
+}
+```
+
+---
+
+## 集成方式
+
+### 在 `useGameLoop.js` 的 `shoot()` 函数中
+
+shoot 已有 `side` 参数，直接传给音效函数。只在 shoot 里调用，不在其他地方添加音效。
+
+```js
+import { playHit, playMiss, playKill } from '../utils/sounds.js';
+
+// 在命中分支（target.value % prime === 0）中：
+playHit(side);
+if (target.value === 1) {
+  playKill(side, target.type === 'boss');
+}
+
+// 在射错分支（else）中：
+playMiss(side);
+```
+
+仅此而已。不在 tickPlayer、countdown、ended 等地方调用音效。
+
+---
+
+## 不要改的东西
+
+- 游戏逻辑的判定和计分
+- postMessage 协议和 URL 参数解析
+- 所有已完成的视觉动画（下落平滑、击杀爆炸、按钮反馈、连击特效、炮弹飞行、怪物造型）
+- Menu.jsx 和 Results.jsx
+- 怪物生成规则和下落速度
+
+---
+
+## 测试验证
+
+1. 玩家 A 射击命中 → 听到偏左、稍高音的短促"叮"
+2. 玩家 B 射击命中 → 听到偏右、稍低音的短促"叮"
+3. A 和 B 同时射击 → 两个音效方位和音色可区分，不混乱
+4. 射错 → 低沉嗡声，同样有方位和音高区分
+5. 击杀怪物 → 两音上行，方位/音高区分
+6. 击杀 Boss → 三音上行（比普通击杀多一个高音）
+7. 快速连射时音效不卡顿、不爆音
+8. 整体音量在教室大屏上不刺耳（所有音量 ≤ 0.3）
+9. 页面加载时不会自动发出声音（AudioContext 懒初始化）
+10. `mode=tournament` 模式下一切正常
