@@ -266,6 +266,8 @@ export default function SoloGame({ onBack }) {
 
       <div style={{
         flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
         padding: '0 4px',
         minHeight: 0,
         position: 'relative',
