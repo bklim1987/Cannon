@@ -306,7 +306,7 @@ export default function SoloGame({ onBack, onLeaderboard }) {
             {player.score}
           </span>
         </span>
-        <Timer timeLeft={state.timeLeft} />
+        <Timer timeLeft={state.timeLeft} duration={duration * 1000} />
         <span style={{ fontSize: '12px' }}>
           {comboActive ? (
             <span style={{ color: '#fbbf24', animation: 'pulse 0.5s infinite' }}>

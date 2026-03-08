@@ -130,7 +130,7 @@ export default function Game({ onBack, onLeaderboard }) {
         zIndex: 10,
         pointerEvents: 'none',
       }}>
-        <Timer timeLeft={state.timeLeft} />
+        <Timer timeLeft={state.timeLeft} duration={duration * 1000} />
       </div>
 
       <div style={{
