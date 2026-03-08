@@ -8,6 +8,9 @@ import PrimeButton from './PrimeButton.jsx';
 import Timer from './Timer.jsx';
 
 function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
+  const [name, setName] = useState('');
+  const [saved, setSaved] = useState(false);
+
   const played = useRef(false);
   useEffect(() => {
     if (!played.current) {
@@ -15,6 +18,21 @@ function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
       playVictory();
     }
   }, []);
+
+  const handleSave = () => {
+    const finalName = name.trim() || '单人挑战';
+    saveScore({
+      mode: 'solo',
+      name: finalName,
+      score: player.score,
+      kills: player.kills,
+      maxCombo: player.maxCombo,
+      missed: player.missed,
+      locks: player.locks,
+      result: 'solo',
+    });
+    setSaved(true);
+  };
 
   return (
     <div style={{
@@ -53,7 +71,49 @@ function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
         </div>
       </div>
 
-      <div style={{ fontSize: '13px', color: '#6b7280' }}>成绩已保存</div>
+      {!saved ? (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="输入名字（可选）"
+            style={{
+              padding: '8px 12px',
+              fontSize: '16px',
+              backgroundColor: '#263040',
+              color: '#e5e7eb',
+              border: '1px solid #374151',
+              borderRadius: '8px',
+              textAlign: 'center',
+              width: '200px',
+              outline: 'none',
+            }}
+          />
+          <button
+            onPointerDown={(e) => { e.preventDefault(); handleSave(); }}
+            style={{
+              padding: '12px 36px',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              backgroundColor: '#10b981',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              touchAction: 'manipulation',
+              userSelect: 'none',
+              WebkitUserSelect: 'none',
+              minHeight: '50px',
+            }}
+          >
+            保存成绩
+          </button>
+        </div>
+      ) : (
+        <div style={{ fontSize: '14px', color: '#10b981', fontWeight: 'bold' }}>成绩已保存</div>
+      )}
+
       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
         <button
           onPointerDown={(e) => { e.preventDefault(); onRestart(); }}
@@ -124,7 +184,6 @@ export default function SoloGame({ onBack, onLeaderboard }) {
   const [endState, setEndState] = useState(null);
   const [projectiles, setProjectiles] = useState([]);
   const gridRef = useRef(null);
-  const savedRef = useRef(false);
 
   const duration = DEFAULT_DURATION;
 
@@ -143,22 +202,6 @@ export default function SoloGame({ onBack, onLeaderboard }) {
     return () => { if (renderRef.current) clearInterval(renderRef.current); };
   }, [init, startCountdown]);
 
-  useEffect(() => {
-    if (endState && !savedRef.current) {
-      savedRef.current = true;
-      const p = endState.player;
-      saveScore({
-        mode: 'solo',
-        name: '单人挑战',
-        score: p.score,
-        kills: p.kills,
-        maxCombo: p.maxCombo,
-        missed: p.missed,
-        locks: p.locks,
-        result: 'solo',
-      });
-    }
-  }, [endState]);
 
   const state = getState();
   if (!state) return null;
@@ -170,7 +213,6 @@ export default function SoloGame({ onBack, onLeaderboard }) {
         onLeaderboard={onLeaderboard}
         onRestart={() => {
           setEndState(null);
-          savedRef.current = false;
           setProjectiles([]);
           init();
           startCountdown();

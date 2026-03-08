@@ -1,38 +1,58 @@
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { COLORS } from '../utils/constants.js';
 import { playVictory } from '../utils/sounds.js';
 import { saveScore } from '../utils/scores.js';
+
+const inputStyle = {
+  padding: '6px 10px',
+  fontSize: '14px',
+  backgroundColor: '#263040',
+  color: '#e5e7eb',
+  border: '1px solid #374151',
+  borderRadius: '6px',
+  textAlign: 'center',
+  width: '140px',
+  outline: 'none',
+};
 
 export default function Results({ playerA, playerB, nameA, nameB, isTournament, onRestart, onBack, onLeaderboard }) {
   const winner = playerA.score > playerB.score ? 'A'
     : playerB.score > playerA.score ? 'B'
     : 'draw';
 
+  const [editNameA, setEditNameA] = useState(nameA);
+  const [editNameB, setEditNameB] = useState(nameB);
+  const [saved, setSaved] = useState(false);
+
   const played = useRef(false);
   useEffect(() => {
     if (!played.current) {
       played.current = true;
       playVictory();
-      if (!isTournament) {
-        const resultA = winner === 'A' ? 'win' : winner === 'B' ? 'lose' : 'draw';
-        const resultB = winner === 'B' ? 'win' : winner === 'A' ? 'lose' : 'draw';
-        saveScore({
-          mode: 'duo', name: nameA, score: playerA.score,
-          kills: playerA.kills, maxCombo: playerA.maxCombo,
-          missed: playerA.missed, locks: playerA.locks, result: resultA,
-        });
-        saveScore({
-          mode: 'duo', name: nameB, score: playerB.score,
-          kills: playerB.kills, maxCombo: playerB.maxCombo,
-          missed: playerB.missed, locks: playerB.locks, result: resultB,
-        });
-      }
     }
   }, []);
 
+  const handleSave = () => {
+    const resultA = winner === 'A' ? 'win' : winner === 'B' ? 'lose' : 'draw';
+    const resultB = winner === 'B' ? 'win' : winner === 'A' ? 'lose' : 'draw';
+    const finalNameA = editNameA.trim() || nameA;
+    const finalNameB = editNameB.trim() || nameB;
+    saveScore({
+      mode: 'duo', name: finalNameA, score: playerA.score,
+      kills: playerA.kills, maxCombo: playerA.maxCombo,
+      missed: playerA.missed, locks: playerA.locks, result: resultA,
+    });
+    saveScore({
+      mode: 'duo', name: finalNameB, score: playerB.score,
+      kills: playerB.kills, maxCombo: playerB.maxCombo,
+      missed: playerB.missed, locks: playerB.locks, result: resultB,
+    });
+    setSaved(true);
+  };
+
   const cards = [
-    { side: 'A', name: nameA, player: playerA, color: COLORS.playerA },
-    { side: 'B', name: nameB, player: playerB, color: COLORS.playerB },
+    { side: 'A', name: editNameA, setName: setEditNameA, player: playerA, color: COLORS.playerA },
+    { side: 'B', name: editNameB, setName: setEditNameB, player: playerB, color: COLORS.playerB },
   ];
 
   return (
@@ -52,7 +72,7 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
 
       {winner !== 'draw' && (
         <h2 style={{ fontSize: '24px', color: '#fbbf24' }}>
-          🏆 {winner === 'A' ? nameA : nameB} 胜利！
+          🏆 {winner === 'A' ? editNameA : editNameB} 胜利！
         </h2>
       )}
       {winner === 'draw' && (
@@ -60,7 +80,7 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
       )}
 
       <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
-        {cards.map(({ side, name, player, color }) => {
+        {cards.map(({ side, name, setName, player, color }) => {
           const isWinner = winner === side;
           return (
             <div key={side} style={{
@@ -73,9 +93,19 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
               textAlign: 'center',
               animation: isWinner ? 'winnerPulse 1.5s ease-in-out infinite' : 'none',
             }}>
-              <div style={{ fontSize: '18px', fontWeight: 'bold', color, marginBottom: '8px' }}>
-                {name}
-              </div>
+              {!isTournament && !saved ? (
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="输入名字"
+                  style={{ ...inputStyle, marginBottom: '8px', color }}
+                />
+              ) : (
+                <div style={{ fontSize: '18px', fontWeight: 'bold', color, marginBottom: '8px' }}>
+                  {name}
+                </div>
+              )}
               <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#fff', marginBottom: '12px' }}>
                 {player.score}
               </div>
@@ -92,7 +122,29 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
 
       {!isTournament && (
         <>
-          <div style={{ fontSize: '13px', color: '#6b7280' }}>成绩已保存</div>
+          {!saved ? (
+            <button
+              onPointerDown={(e) => { e.preventDefault(); handleSave(); }}
+              style={{
+                padding: '12px 36px',
+                fontSize: '18px',
+                fontWeight: 'bold',
+                backgroundColor: '#10b981',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                touchAction: 'manipulation',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                minHeight: '50px',
+              }}
+            >
+              保存成绩
+            </button>
+          ) : (
+            <div style={{ fontSize: '14px', color: '#10b981', fontWeight: 'bold' }}>成绩已保存</div>
+          )}
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <button
               onPointerDown={(e) => { e.preventDefault(); onRestart(); }}
