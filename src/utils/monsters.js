@@ -6,12 +6,12 @@ function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-export function createMonster(type, existingMonsters, primes = PRIMES) {
+export function createMonster(type, existingMonsters) {
   const config = MONSTER_TYPES[type];
   const factors = [];
   let value = 1;
   for (let i = 0; i < config.factorCount; i++) {
-    const p = pickRandom(primes);
+    const p = pickRandom(PRIMES);
     factors.push(p);
     value *= p;
   }

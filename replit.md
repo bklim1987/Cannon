@@ -50,18 +50,12 @@ src/
 - Two-player split-screen: Side-by-side on 1920x1080, both scores saved
 - Tournament mode: Via URL params, skips menu, sends postMessage on end
 
-## Difficulty Modes
-- Easy mode: Prime pool [2, 3, 5] — suitable for 9-year-olds
-- Normal mode: Prime pool [2, 3, 5, 7, 11, 13] — full challenge
-- Menu shows two difficulty buttons for duo mode; single-player uses normal by default
-- Tournament mode reads difficulty from URL param `difficulty=easy` (defaults to normal)
-
 ## Key Mechanics
+- 6 prime buttons: [2, 3, 5, 7, 11, 13]
 - Monster types: small (2 factors, 100pts), big (3 factors, 200pts), boss (5 factors, 500pts)
 - Wrong shot penalty: 1s full lockout
 - Combo system: 10 consecutive hits = 1.5x multiplier
 - Monster escape: Red flash + score deduction warning when monsters reach bottom
-- Empty board auto-spawn: When all monsters are cleared, a new small monster spawns immediately
 
 ## Player Colors
 - Player A: Cyan (#38bdf8)
@@ -75,7 +69,7 @@ src/
 - Stereo panning: A=-0.9 (left), B=0.9 (right); pitch shifted per player
 
 ## Tournament Hub Integration
-- URL params: teamA/playerA, teamB/playerB, mode, duration, matchId, difficulty
+- URL params: teamA/playerA, teamB/playerB, mode, duration, matchId
 - Sends `tournamentMatchEnd` postMessage on game end with scores and stats
 
 ## Score Recording

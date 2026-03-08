@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { COLS, ROWS, COLORS, COMBO_THRESHOLD, LOCK_DURATION, DEFAULT_DURATION, PRIMES_EASY, PRIMES_NORMAL } from '../utils/constants.js';
+import { PRIMES, COLS, ROWS, COLORS, COMBO_THRESHOLD, LOCK_DURATION, DEFAULT_DURATION } from '../utils/constants.js';
 import { useSoloGameLoop } from '../hooks/useSoloGameLoop.js';
 import { saveScore } from '../utils/scores.js';
 import { playVictory } from '../utils/sounds.js';
@@ -179,8 +179,7 @@ function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
   );
 }
 
-export default function SoloGame({ difficulty = 'normal', onBack, onLeaderboard }) {
-  const activePrimes = difficulty === 'easy' ? PRIMES_EASY : PRIMES_NORMAL;
+export default function SoloGame({ onBack, onLeaderboard }) {
   const [, forceUpdate] = useState(0);
   const [endState, setEndState] = useState(null);
   const [projectiles, setProjectiles] = useState([]);
@@ -192,7 +191,7 @@ export default function SoloGame({ difficulty = 'normal', onBack, onLeaderboard 
     setEndState({ player: { ...state.player } });
   }, []);
 
-  const { getState, init, startCountdown, moveCannon, shoot } = useSoloGameLoop(duration, handleEnd, activePrimes);
+  const { getState, init, startCountdown, moveCannon, shoot } = useSoloGameLoop(duration, handleEnd);
 
   const renderRef = useRef(null);
 
@@ -378,7 +377,7 @@ export default function SoloGame({ difficulty = 'normal', onBack, onLeaderboard 
         paddingBottom: '20px',
         minHeight: '60px',
       }}>
-        {activePrimes.map(p => (
+        {PRIMES.map(p => (
           <PrimeButton
             key={p}
             prime={p}

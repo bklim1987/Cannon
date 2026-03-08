@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { COLORS, DEFAULT_DURATION, PRIMES_EASY, PRIMES_NORMAL } from '../utils/constants.js';
+import { COLORS, DEFAULT_DURATION } from '../utils/constants.js';
 import { useGameLoop } from '../hooks/useGameLoop.js';
 import PlayerSide from './PlayerSide.jsx';
 import Timer from './Timer.jsx';
@@ -15,14 +15,11 @@ function getUrlParams() {
     isTournament,
     matchId: params.get('matchId') || '',
     duration: (rawDuration > 0 && Number.isFinite(rawDuration)) ? rawDuration : DEFAULT_DURATION,
-    difficulty: params.get('difficulty') || null,
   };
 }
 
-export default function Game({ difficulty: propDifficulty, onBack, onLeaderboard }) {
-  const { nameA, nameB, matchId, isTournament, duration, difficulty: urlDifficulty } = getUrlParams();
-  const difficulty = isTournament ? (urlDifficulty || 'normal') : (propDifficulty || 'normal');
-  const activePrimes = difficulty === 'easy' ? PRIMES_EASY : PRIMES_NORMAL;
+export default function Game({ onBack, onLeaderboard }) {
+  const { nameA, nameB, matchId, isTournament, duration } = getUrlParams();
   const [, forceUpdate] = useState(0);
   const [endState, setEndState] = useState(null);
 
@@ -54,7 +51,7 @@ export default function Game({ difficulty: propDifficulty, onBack, onLeaderboard
     } catch (e) {}
   }, [matchId]);
 
-  const { getState, init, startCountdown, moveCannon, shoot } = useGameLoop(duration, handleEnd, activePrimes);
+  const { getState, init, startCountdown, moveCannon, shoot } = useGameLoop(duration, handleEnd);
 
   const renderRef = useRef(null);
 
@@ -151,7 +148,6 @@ export default function Game({ difficulty: propDifficulty, onBack, onLeaderboard
         onShoot={shoot}
         timeLeft={state.timeLeft}
         duration={duration * 1000}
-        activePrimes={activePrimes}
       />
 
       <div style={{
@@ -169,7 +165,6 @@ export default function Game({ difficulty: propDifficulty, onBack, onLeaderboard
         onShoot={shoot}
         timeLeft={state.timeLeft}
         duration={duration * 1000}
-        activePrimes={activePrimes}
       />
       </div>
     </div>
