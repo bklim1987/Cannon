@@ -130,7 +130,7 @@ export default function Game({ onBack, onLeaderboard }) {
         zIndex: 10,
         pointerEvents: 'none',
       }}>
-        <Timer timeLeft={state.timeLeft} duration={duration * 1000} />
+        <Timer timeLeft={state.timeLeft} />
       </div>
 
       <div style={{
@@ -146,6 +146,8 @@ export default function Game({ onBack, onLeaderboard }) {
         playerColor={COLORS.playerA}
         onMove={moveCannon}
         onShoot={shoot}
+        timeLeft={state.timeLeft}
+        duration={duration * 1000}
       />
 
       <div style={{
@@ -161,6 +163,8 @@ export default function Game({ onBack, onLeaderboard }) {
         playerColor={COLORS.playerB}
         onMove={moveCannon}
         onShoot={shoot}
+        timeLeft={state.timeLeft}
+        duration={duration * 1000}
       />
       </div>
     </div>

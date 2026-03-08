@@ -306,7 +306,7 @@ export default function SoloGame({ onBack, onLeaderboard }) {
             {player.score}
           </span>
         </span>
-        <Timer timeLeft={state.timeLeft} duration={duration * 1000} />
+        <Timer timeLeft={state.timeLeft} />
         <span style={{ fontSize: '12px' }}>
           {comboActive ? (
             <span style={{ color: '#fbbf24', animation: 'pulse 0.5s infinite' }}>
@@ -387,6 +387,34 @@ export default function SoloGame({ onBack, onLeaderboard }) {
           />
         ))}
       </div>
+
+      {(() => {
+        const progress = Math.max(0, Math.min(1, state.timeLeft / (duration * 1000)));
+        const isUrgent = state.timeLeft / 1000 <= 10;
+        return (
+          <div style={{
+            padding: '0 12px',
+            height: '5px',
+          }}>
+            <div style={{
+              width: '100%',
+              height: '3px',
+              backgroundColor: 'rgba(255,255,255,0.08)',
+              borderRadius: '2px',
+              overflow: 'hidden',
+            }}>
+              <div style={{
+                width: `${progress * 100}%`,
+                height: '100%',
+                backgroundColor: isUrgent ? '#ef4444' : COLORS.playerA,
+                borderRadius: '2px',
+                transition: 'width 0.3s linear',
+                opacity: 0.7,
+              }} />
+            </div>
+          </div>
+        );
+      })()}
 
       {player.locked && (
         <div style={{

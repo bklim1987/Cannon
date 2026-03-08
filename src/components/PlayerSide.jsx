@@ -3,7 +3,7 @@ import { PRIMES, COLS, ROWS, COLORS, COMBO_THRESHOLD, LOCK_DURATION } from '../u
 import GameGrid from './GameGrid.jsx';
 import PrimeButton from './PrimeButton.jsx';
 
-export default function PlayerSide({ player, name, side, playerColor, onMove, onShoot }) {
+export default function PlayerSide({ player, name, side, playerColor, onMove, onShoot, timeLeft, duration }) {
   if (!player) return null;
 
   const [projectiles, setProjectiles] = useState([]);
@@ -176,6 +176,34 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
           />
         ))}
       </div>
+
+      {duration > 0 && (() => {
+        const progress = Math.max(0, Math.min(1, timeLeft / duration));
+        const isUrgent = timeLeft / 1000 <= 10;
+        return (
+          <div style={{
+            padding: '0 20px',
+            height: '4px',
+          }}>
+            <div style={{
+              width: '100%',
+              height: '3px',
+              backgroundColor: 'rgba(255,255,255,0.08)',
+              borderRadius: '2px',
+              overflow: 'hidden',
+            }}>
+              <div style={{
+                width: `${progress * 100}%`,
+                height: '100%',
+                backgroundColor: isUrgent ? '#ef4444' : playerColor,
+                borderRadius: '2px',
+                transition: 'width 0.3s linear',
+                opacity: 0.7,
+              }} />
+            </div>
+          </div>
+        );
+      })()}
 
       {player.locked && (
         <div style={{
