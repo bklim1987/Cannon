@@ -3,7 +3,7 @@ import { COLORS } from '../utils/constants.js';
 import { playVictory } from '../utils/sounds.js';
 import { saveScore } from '../utils/scores.js';
 
-export default function Results({ playerA, playerB, nameA, nameB, isTournament, onRestart, onBack }) {
+export default function Results({ playerA, playerB, nameA, nameB, isTournament, onRestart, onBack, onLeaderboard }) {
   const winner = playerA.score > playerB.score ? 'A'
     : playerB.score > playerA.score ? 'B'
     : 'draw';
@@ -91,36 +91,18 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
       </div>
 
       {!isTournament && (
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <button
-            onPointerDown={(e) => { e.preventDefault(); onRestart(); }}
-            style={{
-              padding: '16px 48px',
-              fontSize: '20px',
-              fontWeight: 'bold',
-              backgroundColor: '#fbbf24',
-              color: '#000',
-              border: 'none',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              touchAction: 'manipulation',
-              userSelect: 'none',
-              WebkitUserSelect: 'none',
-              minHeight: '56px',
-            }}
-          >
-            再来一局
-          </button>
-          {onBack && (
+        <>
+          <div style={{ fontSize: '13px', color: '#6b7280' }}>成绩已保存</div>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <button
-              onPointerDown={(e) => { e.preventDefault(); onBack(); }}
+              onPointerDown={(e) => { e.preventDefault(); onRestart(); }}
               style={{
                 padding: '16px 48px',
                 fontSize: '20px',
                 fontWeight: 'bold',
-                backgroundColor: 'transparent',
-                color: '#9ca3af',
-                border: '2px solid #374151',
+                backgroundColor: '#fbbf24',
+                color: '#000',
+                border: 'none',
                 borderRadius: '12px',
                 cursor: 'pointer',
                 touchAction: 'manipulation',
@@ -129,10 +111,52 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
                 minHeight: '56px',
               }}
             >
-              返回主页
+              再来一局
+            </button>
+            {onBack && (
+              <button
+                onPointerDown={(e) => { e.preventDefault(); onBack(); }}
+                style={{
+                  padding: '16px 48px',
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                  backgroundColor: 'transparent',
+                  color: '#9ca3af',
+                  border: '2px solid #374151',
+                  borderRadius: '12px',
+                  cursor: 'pointer',
+                  touchAction: 'manipulation',
+                  userSelect: 'none',
+                  WebkitUserSelect: 'none',
+                  minHeight: '56px',
+                }}
+              >
+                返回主页
+              </button>
+            )}
+          </div>
+          {onLeaderboard && (
+            <button
+              onPointerDown={(e) => { e.preventDefault(); onLeaderboard(); }}
+              style={{
+                padding: '10px 32px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                backgroundColor: 'transparent',
+                color: '#9ca3af',
+                border: '2px solid #374151',
+                borderRadius: '10px',
+                cursor: 'pointer',
+                touchAction: 'manipulation',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                minHeight: '44px',
+              }}
+            >
+              查看排行榜
             </button>
           )}
-        </div>
+        </>
       )}
     </div>
   );

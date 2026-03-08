@@ -14,11 +14,11 @@ export default function App() {
   const [screen, setScreen] = useState(isTournamentMode() ? 'game' : 'menu');
 
   if (screen === 'game') {
-    return <Game onBack={() => setScreen('menu')} />;
+    return <Game onBack={() => setScreen('menu')} onLeaderboard={() => setScreen('leaderboard')} />;
   }
 
   if (screen === 'solo') {
-    return <SoloGame onBack={() => setScreen('menu')} />;
+    return <SoloGame onBack={() => setScreen('menu')} onLeaderboard={() => setScreen('leaderboard')} />;
   }
 
   if (screen === 'leaderboard') {

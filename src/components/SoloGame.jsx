@@ -7,7 +7,7 @@ import GameGrid from './GameGrid.jsx';
 import PrimeButton from './PrimeButton.jsx';
 import Timer from './Timer.jsx';
 
-function SoloResults({ player, onRestart, onBack }) {
+function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
   const played = useRef(false);
   useEffect(() => {
     if (!played.current) {
@@ -53,6 +53,7 @@ function SoloResults({ player, onRestart, onBack }) {
         </div>
       </div>
 
+      <div style={{ fontSize: '13px', color: '#6b7280' }}>成绩已保存</div>
       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
         <button
           onPointerDown={(e) => { e.preventDefault(); onRestart(); }}
@@ -93,11 +94,32 @@ function SoloResults({ player, onRestart, onBack }) {
           返回主页
         </button>
       </div>
+      {onLeaderboard && (
+        <button
+          onPointerDown={(e) => { e.preventDefault(); onLeaderboard(); }}
+          style={{
+            padding: '10px 32px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            backgroundColor: 'transparent',
+            color: '#9ca3af',
+            border: '2px solid #374151',
+            borderRadius: '10px',
+            cursor: 'pointer',
+            touchAction: 'manipulation',
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+            minHeight: '44px',
+          }}
+        >
+          查看排行榜
+        </button>
+      )}
     </div>
   );
 }
 
-export default function SoloGame({ onBack }) {
+export default function SoloGame({ onBack, onLeaderboard }) {
   const [, forceUpdate] = useState(0);
   const [endState, setEndState] = useState(null);
   const [projectiles, setProjectiles] = useState([]);
@@ -145,6 +167,7 @@ export default function SoloGame({ onBack }) {
     return (
       <SoloResults
         player={endState.player}
+        onLeaderboard={onLeaderboard}
         onRestart={() => {
           setEndState(null);
           savedRef.current = false;

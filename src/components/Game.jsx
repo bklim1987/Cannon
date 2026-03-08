@@ -18,7 +18,7 @@ function getUrlParams() {
   };
 }
 
-export default function Game({ onBack }) {
+export default function Game({ onBack, onLeaderboard }) {
   const { nameA, nameB, matchId, isTournament, duration } = getUrlParams();
   const [, forceUpdate] = useState(0);
   const [endState, setEndState] = useState(null);
@@ -85,6 +85,7 @@ export default function Game({ onBack }) {
           startCountdown();
         }}
         onBack={onBack}
+        onLeaderboard={onLeaderboard}
       />
     );
   }
