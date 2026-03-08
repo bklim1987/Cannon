@@ -141,6 +141,10 @@ export function useSoloGameLoop(duration, onEnd) {
         p.escapeEffects.splice(i, 1);
       }
     }
+
+    if (p.monsters.length === 0) {
+      p.monsters.push(createMonster('small', p.monsters));
+    }
   }
 
   function tick() {
