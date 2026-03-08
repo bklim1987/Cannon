@@ -144,6 +144,7 @@ export function useSoloGameLoop(duration, onEnd) {
 
     if (p.monsters.length === 0) {
       p.monsters.push(createMonster('small', p.monsters));
+      p.spawnAcc = 0;
     }
   }
 
