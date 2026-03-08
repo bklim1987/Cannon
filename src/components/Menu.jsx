@@ -133,9 +133,13 @@ function PreviewBoss({ config }) {
   );
 }
 
-const btnBase = {
-  padding: '16px 48px',
-  fontSize: '20px',
+const modeBtnBase = {
+  flex: 1,
+  minWidth: '140px',
+  maxWidth: '220px',
+  minHeight: '72px',
+  padding: '14px 16px',
+  fontSize: '18px',
   fontWeight: 'bold',
   border: 'none',
   borderRadius: '12px',
@@ -143,8 +147,11 @@ const btnBase = {
   touchAction: 'manipulation',
   userSelect: 'none',
   WebkitUserSelect: 'none',
-  minHeight: '56px',
-  minWidth: '200px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '4px',
 };
 
 export default function Menu({ onStartSolo, onStartDuo, onLeaderboard }) {
@@ -210,25 +217,53 @@ export default function Menu({ onStartSolo, onStartDuo, onLeaderboard }) {
         })}
       </div>
 
+      <div style={{ fontSize: '14px', color: '#9ca3af', marginTop: '4px' }}>选择难度开始游戏</div>
+
       <div style={{
         display: 'flex',
-        gap: '12px',
+        gap: '16px',
         flexWrap: 'wrap',
         justifyContent: 'center',
+        width: '100%',
+        maxWidth: '500px',
       }}>
-        <button
-          onPointerDown={(e) => { e.preventDefault(); onStartSolo(); }}
-          style={{ ...btnBase, backgroundColor: COLORS.playerA, color: '#000' }}
-        >
-          单人挑战
-        </button>
-        <button
-          onPointerDown={(e) => { e.preventDefault(); onStartDuo(); }}
-          style={{ ...btnBase, backgroundColor: '#fbbf24', color: '#000' }}
-        >
-          双人对战
-        </button>
+        <div style={{ display: 'flex', gap: '16px', width: '100%', justifyContent: 'center' }}>
+          <button
+            onPointerDown={(e) => { e.preventDefault(); onStartDuo('easy'); }}
+            style={{ ...modeBtnBase, backgroundColor: '#10b981', color: '#000' }}
+          >
+            <span>🌟 简单模式</span>
+            <span style={{ fontSize: '13px', fontWeight: 'normal', color: 'rgba(0,0,0,0.6)' }}>2, 3, 5</span>
+          </button>
+          <button
+            onPointerDown={(e) => { e.preventDefault(); onStartDuo('normal'); }}
+            style={{ ...modeBtnBase, backgroundColor: '#fbbf24', color: '#000' }}
+          >
+            <span>🔥 完整模式</span>
+            <span style={{ fontSize: '13px', fontWeight: 'normal', color: 'rgba(0,0,0,0.6)' }}>2, 3, 5, 7, 11, 13</span>
+          </button>
+        </div>
       </div>
+
+      <button
+        onPointerDown={(e) => { e.preventDefault(); onStartSolo('normal'); }}
+        style={{
+          padding: '12px 36px',
+          fontSize: '16px',
+          fontWeight: 'bold',
+          backgroundColor: 'transparent',
+          color: COLORS.playerA,
+          border: `2px solid ${COLORS.playerA}`,
+          borderRadius: '12px',
+          cursor: 'pointer',
+          touchAction: 'manipulation',
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
+          minHeight: '48px',
+        }}
+      >
+        单人挑战
+      </button>
 
       <button
         onPointerDown={(e) => { e.preventDefault(); onLeaderboard(); }}

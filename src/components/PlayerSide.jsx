@@ -3,7 +3,7 @@ import { PRIMES, COLS, ROWS, COLORS, COMBO_THRESHOLD, LOCK_DURATION } from '../u
 import GameGrid from './GameGrid.jsx';
 import PrimeButton from './PrimeButton.jsx';
 
-export default function PlayerSide({ player, name, side, playerColor, onMove, onShoot, timeLeft, duration }) {
+export default function PlayerSide({ player, name, side, playerColor, onMove, onShoot, timeLeft, duration, activePrimes = PRIMES }) {
   if (!player) return null;
 
   const [projectiles, setProjectiles] = useState([]);
@@ -166,7 +166,7 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
         height: '12%',
         minHeight: '48px',
       }}>
-        {PRIMES.map(p => (
+        {activePrimes.map(p => (
           <PrimeButton
             key={p}
             prime={p}

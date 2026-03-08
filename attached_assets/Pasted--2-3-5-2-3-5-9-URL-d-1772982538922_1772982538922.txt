@@ -1,0 +1,138 @@
+# 新增简单难度模式（质数池 2, 3, 5）
+
+## 目标
+
+新增简单模式，质数池缩小为 {2, 3, 5}，适合 9 岁学生。首页提供两个入口按钮供选择，锦标赛模式通过 URL 参数 `difficulty=easy` 自动选择。**不改变任何现有游戏逻辑、计分规则或 postMessage 协议。**
+
+---
+
+## 改动范围
+
+### 1. 状态传递架构
+
+当前 `App.jsx` 控制 menu → game 的切换。需要让选择的 difficulty 从 Menu 传到 Game。
+
+**`App.jsx`**：
+- 新增 state：`const [difficulty, setDifficulty] = useState(null)`
+- Menu 的 onStart 回调改为接收 difficulty 参数：`onStart={(diff) => setDifficulty(diff)}`
+- 将 `difficulty` 传给 Game 组件
+
+**但如果是锦标赛模式**（URL 有 `mode=tournament`），仍然跳过菜单，difficulty 从 URL 参数读取（默认 `normal`）。
+
+### 2. Menu.jsx — 两个入口按钮
+
+替换现有的单个"开始对战"按钮，改为两个并排的模式选择按钮：
+
+```
+              数字大炮
+            Number Cannon
+
+       🎯 点击列移动大炮
+       🔢 按质数按钮射击怪物
+       ❌ 射错锁定1秒
+       🔥 连续命中10次 → 1.5x 得分!
+
+    [小怪] [大怪] [BOSS]     ← 保留现有的怪物预览卡片
+
+   ┌─────────────┐  ┌─────────────┐
+   │  🌟 简单模式  │  │  🔥 完整模式  │
+   │   2, 3, 5   │  │ 2,3,5,7,11,13│
+   └─────────────┘  └─────────────┘
+```
+
+具体实现：
+- 去掉现有的单个"开始对战"按钮
+- 新增两个并排按钮，样式一致但颜色区分：
+  - 简单模式：绿色系（背景 `#10b981`，文字黑色）
+  - 完整模式：金黄色系（背景 `#fbbf24`，文字黑色），和现有按钮一致
+- 每个按钮包含两行：第一行是模式名称（大字），第二行是质数列表（小字，颜色稍浅）
+- 两个按钮等宽，横向排列，间距 16px
+- 按钮最小高度 72px，方便触屏点击
+- 简单模式按钮调用 `onStart('easy')`，完整模式调用 `onStart('normal')`
+
+### 3. URL 参数读取
+
+在 `Game.jsx` 的 `getUrlParams()` 中新增：
+
+```js
+difficulty: params.get('difficulty') || 'normal',
+```
+
+Game 组件内确定最终的 difficulty：
+- 锦标赛模式：从 URL 参数读取
+- 非锦标赛模式：从 Menu 传入的 prop 读取
+
+### 4. 质数池动态化
+
+**`constants.js`**：
+
+新增简单模式的质数池常量：
+
+```js
+export const PRIMES_NORMAL = [2, 3, 5, 7, 11, 13];
+export const PRIMES_EASY = [2, 3, 5];
+```
+
+原有的 `PRIMES` 保留不动（保持向后兼容）。
+
+### 5. 传递质数池
+
+根据 difficulty 确定 `activePrimes`：
+```js
+const activePrimes = difficulty === 'easy' ? PRIMES_EASY : PRIMES_NORMAL;
+```
+
+需要让以下组件/函数使用 `activePrimes`：
+
+**`useGameLoop.js`**：
+- `useGameLoop` 接收 `activePrimes` 参数
+- 将 `activePrimes` 传给所有 `createMonster` 调用
+
+**`monsters.js`**：
+- `createMonster` 函数新增 `primes` 参数，从该参数中随机取质数（而不是导入全局 PRIMES）
+- 签名变为：`createMonster(type, existingMonsters, primes)`
+
+**`PlayerSide.jsx`**：
+- 接收 `activePrimes` prop
+- 按钮栏渲染 `activePrimes.map(...)` 而不是 `PRIMES.map(...)`
+- 3 个按钮时 `flex: 1` 自动变宽，不需要特殊处理
+
+---
+
+## URL 使用方式
+
+```
+# 首页选择（学生打开这个就行，在首页点按钮选模式）
+https://cannon.bklim.app/
+
+# 锦标赛 - 简单模式（Tournament Hub 用）
+https://cannon.bklim.app/?mode=tournament&teamA=小明&teamB=小红&difficulty=easy
+
+# 锦标赛 - 完整模式（Tournament Hub 用，和现在一样）
+https://cannon.bklim.app/?mode=tournament&teamA=小明&teamB=小红
+```
+
+---
+
+## 不要改的东西
+
+- 锦标赛模式的行为（仍然跳过菜单、隐藏再来一局）
+- 游戏逻辑：计分、连击、锁定、怪物下落速度、出怪间隔
+- 怪物类型的因数个数（小怪2个、大怪3个、Boss5个）
+- 所有已完成的视觉动画和音效
+- postMessage 协议
+- Results.jsx 的布局
+
+---
+
+## 测试验证
+
+1. 首页显示两个按钮："简单模式"和"完整模式"
+2. 点"简单模式" → 游戏只有 3 个质数按钮 [2] [3] [5]，按钮更宽
+3. 点"完整模式" → 游戏有 6 个质数按钮，和之前完全一样
+4. 简单模式下怪物数值只由 2, 3, 5 组合（如 4, 6, 9, 10, 15, 25, 30, 50, 75...）
+5. 简单模式下不会出现 7, 11, 13 作为因数的怪物
+6. `?mode=tournament&difficulty=easy` → 跳过菜单，直接进入简单模式游戏
+7. `?mode=tournament`（不传 difficulty）→ 跳过菜单，默认完整模式
+8. 所有动画和音效正常
+9. postMessage 正常回传

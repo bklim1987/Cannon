@@ -1,9 +1,9 @@
 import { useRef, useEffect, useCallback } from 'react';
-import { TICK_MS, ROWS, COLS, SPAWN_INTERVAL, LOCK_DURATION, COMBO_THRESHOLD, COMBO_MULTIPLIER } from '../utils/constants.js';
+import { TICK_MS, ROWS, COLS, SPAWN_INTERVAL, LOCK_DURATION, COMBO_THRESHOLD, COMBO_MULTIPLIER, PRIMES_NORMAL } from '../utils/constants.js';
 import { createMonster } from '../utils/monsters.js';
 import { playHit, playMiss, playKill } from '../utils/sounds.js';
 
-function createPlayerState() {
+function createPlayerState(primes) {
   const p = {
     score: 0,
     monsters: [],
@@ -23,13 +23,13 @@ function createPlayerState() {
     escapeEffects: [],
   };
 
-  const m = createMonster('small', p.monsters);
+  const m = createMonster('small', p.monsters, primes);
   p.monsters.push(m);
 
   return p;
 }
 
-export function useSoloGameLoop(duration, onEnd) {
+export function useSoloGameLoop(duration, onEnd, activePrimes = PRIMES_NORMAL) {
   const stateRef = useRef(null);
   const intervalRef = useRef(null);
   const callbackRef = useRef(onEnd);
@@ -39,14 +39,14 @@ export function useSoloGameLoop(duration, onEnd) {
 
   const init = useCallback(() => {
     stateRef.current = {
-      player: createPlayerState(),
+      player: createPlayerState(activePrimes),
       timeLeft: duration * 1000,
       phase: 'countdown',
       countdownValue: 3,
       countdownAcc: 0,
       running: false,
     };
-  }, [duration]);
+  }, [duration, activePrimes]);
 
   const startCountdown = useCallback(() => {
     const s = stateRef.current;
@@ -76,7 +76,7 @@ export function useSoloGameLoop(duration, onEnd) {
         if (m.row === 0 && !m.dying) topOccupied.add(m.col);
       }
       if (topOccupied.size < COLS) {
-        const monster = createMonster('small', p.monsters);
+        const monster = createMonster('small', p.monsters, activePrimes);
         p.monsters.push(monster);
       }
     }
@@ -143,7 +143,7 @@ export function useSoloGameLoop(duration, onEnd) {
     }
 
     if (p.monsters.length === 0) {
-      p.monsters.push(createMonster('small', p.monsters));
+      p.monsters.push(createMonster('small', p.monsters, activePrimes));
       p.spawnAcc = 0;
     }
   }
@@ -221,12 +221,12 @@ export function useSoloGameLoop(duration, onEnd) {
 
         if (p.kills >= p.nextBossAt) {
           p.nextBossAt += 10;
-          const boss = createMonster('boss', p.monsters);
+          const boss = createMonster('boss', p.monsters, activePrimes);
           p.monsters.push(boss);
         }
         if (p.kills >= p.nextBigAt) {
           p.nextBigAt += 3;
-          const big = createMonster('big', p.monsters);
+          const big = createMonster('big', p.monsters, activePrimes);
           p.monsters.push(big);
         }
       } else {

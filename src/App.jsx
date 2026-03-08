@@ -12,13 +12,14 @@ function isTournamentMode() {
 
 export default function App() {
   const [screen, setScreen] = useState(isTournamentMode() ? 'game' : 'menu');
+  const [difficulty, setDifficulty] = useState('normal');
 
   if (screen === 'game') {
-    return <Game onBack={() => setScreen('menu')} onLeaderboard={() => setScreen('leaderboard')} />;
+    return <Game difficulty={difficulty} onBack={() => setScreen('menu')} onLeaderboard={() => setScreen('leaderboard')} />;
   }
 
   if (screen === 'solo') {
-    return <SoloGame onBack={() => setScreen('menu')} onLeaderboard={() => setScreen('leaderboard')} />;
+    return <SoloGame difficulty={difficulty} onBack={() => setScreen('menu')} onLeaderboard={() => setScreen('leaderboard')} />;
   }
 
   if (screen === 'leaderboard') {
@@ -27,8 +28,8 @@ export default function App() {
 
   return (
     <Menu
-      onStartSolo={() => setScreen('solo')}
-      onStartDuo={() => setScreen('game')}
+      onStartSolo={(diff) => { setDifficulty(diff); setScreen('solo'); }}
+      onStartDuo={(diff) => { setDifficulty(diff); setScreen('game'); }}
       onLeaderboard={() => setScreen('leaderboard')}
     />
   );
