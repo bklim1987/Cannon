@@ -96,29 +96,24 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
         );
       })()}
 
-      {dims.w > 0 && monsters.map(m => {
-        const isBoss = m.type === 'boss';
-        const smoothOffset = isBoss && !m.dying ? (m.fallAcc / m.fallMs) * cellH : 0;
-        const topPos = m.row * cellH + smoothOffset;
-        return (
-          <div
-            key={m.id}
-            style={{
-              position: 'absolute',
-              left: m.col * cellW,
-              top: topPos,
-              width: cellW,
-              height: cellH,
-              transition: isBoss ? 'none' : 'top 300ms ease-out',
-              padding: '1px',
-              pointerEvents: 'none',
-              zIndex: m.dying ? 5 : 1,
-            }}
-          >
-            <MonsterCell monster={m} />
-          </div>
-        );
-      })}
+      {dims.w > 0 && monsters.map(m => (
+        <div
+          key={m.id}
+          style={{
+            position: 'absolute',
+            left: m.col * cellW,
+            top: m.row * cellH,
+            width: cellW,
+            height: cellH,
+            transition: 'top 300ms ease-out',
+            padding: '1px',
+            pointerEvents: 'none',
+            zIndex: m.dying ? 5 : 1,
+          }}
+        >
+          <MonsterCell monster={m} />
+        </div>
+      ))}
 
       {dims.w > 0 && projectiles && projectiles.map(p => (
         <Projectile key={p.id} proj={p} onDone={onProjectileDone} />
