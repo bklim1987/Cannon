@@ -15,6 +15,25 @@ const inputStyle = {
   outline: 'none',
 };
 
+const STAT_LABELS = ['击杀', '最高连击', '漏掉', '射错'];
+const STAT_KEYS = ['kills', 'maxCombo', 'missed', 'locks'];
+
+function StatLine({ label, value, visible }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
+      <span>{label}:</span>
+      <span style={{
+        opacity: visible ? 1 : 0,
+        transition: 'opacity 0.3s ease-in',
+        fontWeight: 'bold',
+        color: '#e5e7eb',
+      }}>
+        {value}
+      </span>
+    </div>
+  );
+}
+
 export default function Results({ playerA, playerB, nameA, nameB, isTournament, onRestart, onBack, onLeaderboard }) {
   const winner = playerA.score > playerB.score ? 'A'
     : playerB.score > playerA.score ? 'B'
@@ -23,6 +42,7 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
   const [editNameA, setEditNameA] = useState(nameA);
   const [editNameB, setEditNameB] = useState(nameB);
   const [saved, setSaved] = useState(false);
+  const [revealStep, setRevealStep] = useState(0);
 
   const played = useRef(false);
   useEffect(() => {
@@ -31,6 +51,14 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
       playVictory();
     }
   }, []);
+
+  useEffect(() => {
+    if (revealStep >= STAT_LABELS.length) return;
+    const timer = setTimeout(() => setRevealStep(s => s + 1), 500);
+    return () => clearTimeout(timer);
+  }, [revealStep]);
+
+  const showButtons = revealStep >= STAT_LABELS.length;
 
   const handleSave = () => {
     const resultA = winner === 'A' ? 'win' : winner === 'B' ? 'lose' : 'draw';
@@ -110,42 +138,43 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
                 {player.score}
               </div>
               <div style={{ fontSize: '13px', color: '#9ca3af', lineHeight: 1.8 }}>
-                <div>击杀: {player.kills}</div>
-                <div>最高连击: {player.maxCombo}</div>
-                <div>漏掉: {player.missed}</div>
-                <div>射错: {player.locks}</div>
+                {STAT_LABELS.map((label, i) => (
+                  <StatLine key={label} label={label} value={player[STAT_KEYS[i]]} visible={i < revealStep} />
+                ))}
               </div>
             </div>
           );
         })}
       </div>
 
-      {!isTournament && (
-        <>
+      {showButtons && !isTournament && (
+        <div style={{ opacity: showButtons ? 1 : 0, transition: 'opacity 0.4s ease-in' }}>
           {!saved ? (
-            <button
-              onPointerDown={(e) => { e.preventDefault(); handleSave(); }}
-              style={{
-                padding: '12px 36px',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                backgroundColor: '#10b981',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '12px',
-                cursor: 'pointer',
-                touchAction: 'manipulation',
-                userSelect: 'none',
-                WebkitUserSelect: 'none',
-                minHeight: '50px',
-              }}
-            >
-              保存成绩
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+              <button
+                onPointerDown={(e) => { e.preventDefault(); handleSave(); }}
+                style={{
+                  padding: '12px 36px',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  backgroundColor: '#10b981',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '12px',
+                  cursor: 'pointer',
+                  touchAction: 'manipulation',
+                  userSelect: 'none',
+                  WebkitUserSelect: 'none',
+                  minHeight: '50px',
+                }}
+              >
+                保存成绩
+              </button>
+            </div>
           ) : (
             <div style={{ fontSize: '14px', color: '#10b981', fontWeight: 'bold' }}>成绩已保存</div>
           )}
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '12px' }}>
             <button
               onPointerDown={(e) => { e.preventDefault(); onRestart(); }}
               style={{
@@ -188,27 +217,29 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
             )}
           </div>
           {onLeaderboard && (
-            <button
-              onPointerDown={(e) => { e.preventDefault(); onLeaderboard(); }}
-              style={{
-                padding: '10px 32px',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                backgroundColor: 'transparent',
-                color: '#9ca3af',
-                border: '2px solid #374151',
-                borderRadius: '10px',
-                cursor: 'pointer',
-                touchAction: 'manipulation',
-                userSelect: 'none',
-                WebkitUserSelect: 'none',
-                minHeight: '44px',
-              }}
-            >
-              查看排行榜
-            </button>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
+              <button
+                onPointerDown={(e) => { e.preventDefault(); onLeaderboard(); }}
+                style={{
+                  padding: '10px 32px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  backgroundColor: 'transparent',
+                  color: '#9ca3af',
+                  border: '2px solid #374151',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  touchAction: 'manipulation',
+                  userSelect: 'none',
+                  WebkitUserSelect: 'none',
+                  minHeight: '44px',
+                }}
+              >
+                查看排行榜
+              </button>
+            </div>
           )}
-        </>
+        </div>
       )}
     </div>
   );

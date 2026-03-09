@@ -7,9 +7,13 @@ import GameGrid from './GameGrid.jsx';
 import PrimeButton from './PrimeButton.jsx';
 import Timer from './Timer.jsx';
 
+const SOLO_STAT_LABELS = ['击杀', '最高连击', '漏掉', '射错'];
+const SOLO_STAT_KEYS = ['kills', 'maxCombo', 'missed', 'locks'];
+
 function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
   const [name, setName] = useState('');
   const [saved, setSaved] = useState(false);
+  const [revealStep, setRevealStep] = useState(0);
 
   const played = useRef(false);
   useEffect(() => {
@@ -18,6 +22,14 @@ function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
       playVictory();
     }
   }, []);
+
+  useEffect(() => {
+    if (revealStep >= SOLO_STAT_LABELS.length) return;
+    const timer = setTimeout(() => setRevealStep(s => s + 1), 500);
+    return () => clearTimeout(timer);
+  }, [revealStep]);
+
+  const showButtons = revealStep >= SOLO_STAT_LABELS.length;
 
   const handleSave = () => {
     const finalName = name.trim() || '单人挑战';
@@ -64,116 +76,131 @@ function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
           {player.score}
         </div>
         <div style={{ fontSize: '13px', color: '#9ca3af', lineHeight: 1.8 }}>
-          <div>击杀: {player.kills}</div>
-          <div>最高连击: {player.maxCombo}</div>
-          <div>漏掉: {player.missed}</div>
-          <div>射错: {player.locks}</div>
+          {SOLO_STAT_LABELS.map((label, i) => (
+            <div key={label} style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
+              <span>{label}:</span>
+              <span style={{
+                opacity: i < revealStep ? 1 : 0,
+                transition: 'opacity 0.3s ease-in',
+                fontWeight: 'bold',
+                color: '#e5e7eb',
+              }}>
+                {player[SOLO_STAT_KEYS[i]]}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
-      {!saved ? (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="输入名字（可选）"
-            style={{
-              padding: '8px 12px',
-              fontSize: '16px',
-              backgroundColor: '#263040',
-              color: '#e5e7eb',
-              border: '1px solid #374151',
-              borderRadius: '8px',
-              textAlign: 'center',
-              width: '200px',
-              outline: 'none',
-            }}
-          />
-          <button
-            onPointerDown={(e) => { e.preventDefault(); handleSave(); }}
-            style={{
-              padding: '12px 36px',
-              fontSize: '18px',
-              fontWeight: 'bold',
-              backgroundColor: '#10b981',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              touchAction: 'manipulation',
-              userSelect: 'none',
-              WebkitUserSelect: 'none',
-              minHeight: '50px',
-            }}
-          >
-            保存成绩
-          </button>
-        </div>
-      ) : (
-        <div style={{ fontSize: '14px', color: '#10b981', fontWeight: 'bold' }}>成绩已保存</div>
-      )}
+      {showButtons && (
+        <div style={{ opacity: 1, transition: 'opacity 0.4s ease-in' }}>
+          {!saved ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="输入名字（可选）"
+                style={{
+                  padding: '8px 12px',
+                  fontSize: '16px',
+                  backgroundColor: '#263040',
+                  color: '#e5e7eb',
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  textAlign: 'center',
+                  width: '200px',
+                  outline: 'none',
+                }}
+              />
+              <button
+                onPointerDown={(e) => { e.preventDefault(); handleSave(); }}
+                style={{
+                  padding: '12px 36px',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  backgroundColor: '#10b981',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '12px',
+                  cursor: 'pointer',
+                  touchAction: 'manipulation',
+                  userSelect: 'none',
+                  WebkitUserSelect: 'none',
+                  minHeight: '50px',
+                }}
+              >
+                保存成绩
+              </button>
+            </div>
+          ) : (
+            <div style={{ fontSize: '14px', color: '#10b981', fontWeight: 'bold', textAlign: 'center' }}>成绩已保存</div>
+          )}
 
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <button
-          onPointerDown={(e) => { e.preventDefault(); onRestart(); }}
-          style={{
-            padding: '14px 36px',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            backgroundColor: '#fbbf24',
-            color: '#000',
-            border: 'none',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            touchAction: 'manipulation',
-            userSelect: 'none',
-            WebkitUserSelect: 'none',
-            minHeight: '52px',
-          }}
-        >
-          再来一局
-        </button>
-        <button
-          onPointerDown={(e) => { e.preventDefault(); onBack(); }}
-          style={{
-            padding: '14px 36px',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            backgroundColor: 'transparent',
-            color: '#9ca3af',
-            border: '2px solid #374151',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            touchAction: 'manipulation',
-            userSelect: 'none',
-            WebkitUserSelect: 'none',
-            minHeight: '52px',
-          }}
-        >
-          返回主页
-        </button>
-      </div>
-      {onLeaderboard && (
-        <button
-          onPointerDown={(e) => { e.preventDefault(); onLeaderboard(); }}
-          style={{
-            padding: '10px 32px',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            backgroundColor: 'transparent',
-            color: '#9ca3af',
-            border: '2px solid #374151',
-            borderRadius: '10px',
-            cursor: 'pointer',
-            touchAction: 'manipulation',
-            userSelect: 'none',
-            WebkitUserSelect: 'none',
-            minHeight: '44px',
-          }}
-        >
-          查看排行榜
-        </button>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '12px' }}>
+            <button
+              onPointerDown={(e) => { e.preventDefault(); onRestart(); }}
+              style={{
+                padding: '14px 36px',
+                fontSize: '18px',
+                fontWeight: 'bold',
+                backgroundColor: '#fbbf24',
+                color: '#000',
+                border: 'none',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                touchAction: 'manipulation',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                minHeight: '52px',
+              }}
+            >
+              再来一局
+            </button>
+            <button
+              onPointerDown={(e) => { e.preventDefault(); onBack(); }}
+              style={{
+                padding: '14px 36px',
+                fontSize: '18px',
+                fontWeight: 'bold',
+                backgroundColor: 'transparent',
+                color: '#9ca3af',
+                border: '2px solid #374151',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                touchAction: 'manipulation',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                minHeight: '52px',
+              }}
+            >
+              返回主页
+            </button>
+          </div>
+          {onLeaderboard && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
+              <button
+                onPointerDown={(e) => { e.preventDefault(); onLeaderboard(); }}
+                style={{
+                  padding: '10px 32px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  backgroundColor: 'transparent',
+                  color: '#9ca3af',
+                  border: '2px solid #374151',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  touchAction: 'manipulation',
+                  userSelect: 'none',
+                  WebkitUserSelect: 'none',
+                  minHeight: '44px',
+                }}
+              >
+                查看排行榜
+              </button>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
