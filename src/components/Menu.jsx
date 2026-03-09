@@ -161,10 +161,10 @@ export default function Menu({ onStartSolo, onStartDuo, onLeaderboard }) {
       padding: '20px',
       gap: '20px',
     }}>
-      <h1 style={{ fontSize: '48px', fontWeight: 'bold', color: '#fbbf24' }}>
+      <h1 style={{ fontSize: '42px', fontWeight: 'bold', color: '#fbbf24' }}>
         因数爆破
       </h1>
-      <p style={{ fontSize: '16px', color: '#9ca3af' }}>Factor Boom!</p>
+      <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#e5e7eb', marginTop: '-4px' }}>Factor Boom!</p>
 
       <div style={{
         maxWidth: '500px',
