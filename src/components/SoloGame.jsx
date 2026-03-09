@@ -23,13 +23,16 @@ function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
     }
   }, []);
 
-  useEffect(() => {
-    if (revealStep >= SOLO_STAT_LABELS.length) return;
-    const timer = setTimeout(() => setRevealStep(s => s + 1), 500);
-    return () => clearTimeout(timer);
-  }, [revealStep]);
+  const [showButtons, setShowButtons] = useState(false);
 
-  const showButtons = revealStep >= SOLO_STAT_LABELS.length;
+  useEffect(() => {
+    if (revealStep < SOLO_STAT_LABELS.length) {
+      const timer = setTimeout(() => setRevealStep(s => s + 1), 500);
+      return () => clearTimeout(timer);
+    }
+    const btnTimer = setTimeout(() => setShowButtons(true), 500);
+    return () => clearTimeout(btnTimer);
+  }, [revealStep]);
 
   const handleSave = () => {
     const finalName = name.trim() || '单人挑战';
@@ -58,6 +61,7 @@ function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
       color: '#e5e7eb',
       gap: '16px',
       padding: '20px',
+      position: 'relative',
     }}>
       <h1 style={{ fontSize: '32px', color: '#fbbf24' }}>挑战结束！</h1>
 
@@ -93,7 +97,17 @@ function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
       </div>
 
       {showButtons && (
-        <div style={{ opacity: 1, transition: 'opacity 0.4s ease-in' }}>
+        <div style={{
+          position: 'absolute',
+          bottom: '20px',
+          left: 0,
+          right: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '10px',
+          animation: 'fadeIn 0.4s ease-in',
+        }}>
           {!saved ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
               <input
@@ -134,10 +148,10 @@ function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
               </button>
             </div>
           ) : (
-            <div style={{ fontSize: '14px', color: '#10b981', fontWeight: 'bold', textAlign: 'center' }}>成绩已保存</div>
+            <div style={{ fontSize: '14px', color: '#10b981', fontWeight: 'bold' }}>成绩已保存</div>
           )}
 
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '12px' }}>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <button
               onPointerDown={(e) => { e.preventDefault(); onRestart(); }}
               style={{
@@ -178,27 +192,25 @@ function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
             </button>
           </div>
           {onLeaderboard && (
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
-              <button
-                onPointerDown={(e) => { e.preventDefault(); onLeaderboard(); }}
-                style={{
-                  padding: '10px 32px',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  backgroundColor: 'transparent',
-                  color: '#9ca3af',
-                  border: '2px solid #374151',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  touchAction: 'manipulation',
-                  userSelect: 'none',
-                  WebkitUserSelect: 'none',
-                  minHeight: '44px',
-                }}
-              >
-                查看排行榜
-              </button>
-            </div>
+            <button
+              onPointerDown={(e) => { e.preventDefault(); onLeaderboard(); }}
+              style={{
+                padding: '10px 32px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                backgroundColor: 'transparent',
+                color: '#9ca3af',
+                border: '2px solid #374151',
+                borderRadius: '10px',
+                cursor: 'pointer',
+                touchAction: 'manipulation',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                minHeight: '44px',
+              }}
+            >
+              查看排行榜
+            </button>
           )}
         </div>
       )}

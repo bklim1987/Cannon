@@ -43,6 +43,7 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
   const [editNameB, setEditNameB] = useState(nameB);
   const [saved, setSaved] = useState(false);
   const [revealStep, setRevealStep] = useState(0);
+  const [showButtons, setShowButtons] = useState(false);
 
   const played = useRef(false);
   useEffect(() => {
@@ -53,12 +54,13 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
   }, []);
 
   useEffect(() => {
-    if (revealStep >= STAT_LABELS.length) return;
-    const timer = setTimeout(() => setRevealStep(s => s + 1), 500);
-    return () => clearTimeout(timer);
+    if (revealStep < STAT_LABELS.length) {
+      const timer = setTimeout(() => setRevealStep(s => s + 1), 500);
+      return () => clearTimeout(timer);
+    }
+    const btnTimer = setTimeout(() => setShowButtons(true), 500);
+    return () => clearTimeout(btnTimer);
   }, [revealStep]);
-
-  const showButtons = revealStep >= STAT_LABELS.length;
 
   const handleSave = () => {
     const resultA = winner === 'A' ? 'win' : winner === 'B' ? 'lose' : 'draw';
@@ -95,6 +97,7 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
       color: '#e5e7eb',
       gap: '20px',
       padding: '20px',
+      position: 'relative',
     }}>
       <h1 style={{ fontSize: '36px', color: '#fbbf24' }}>⏱ 时间到！</h1>
 
@@ -148,33 +151,41 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
       </div>
 
       {showButtons && !isTournament && (
-        <div style={{ opacity: showButtons ? 1 : 0, transition: 'opacity 0.4s ease-in' }}>
+        <div style={{
+          position: 'absolute',
+          bottom: '20px',
+          left: 0,
+          right: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '12px',
+          animation: 'fadeIn 0.4s ease-in',
+        }}>
           {!saved ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-              <button
-                onPointerDown={(e) => { e.preventDefault(); handleSave(); }}
-                style={{
-                  padding: '12px 36px',
-                  fontSize: '18px',
-                  fontWeight: 'bold',
-                  backgroundColor: '#10b981',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  touchAction: 'manipulation',
-                  userSelect: 'none',
-                  WebkitUserSelect: 'none',
-                  minHeight: '50px',
-                }}
-              >
-                保存成绩
-              </button>
-            </div>
+            <button
+              onPointerDown={(e) => { e.preventDefault(); handleSave(); }}
+              style={{
+                padding: '12px 36px',
+                fontSize: '18px',
+                fontWeight: 'bold',
+                backgroundColor: '#10b981',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                touchAction: 'manipulation',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                minHeight: '50px',
+              }}
+            >
+              保存成绩
+            </button>
           ) : (
             <div style={{ fontSize: '14px', color: '#10b981', fontWeight: 'bold' }}>成绩已保存</div>
           )}
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '12px' }}>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <button
               onPointerDown={(e) => { e.preventDefault(); onRestart(); }}
               style={{
@@ -217,27 +228,25 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
             )}
           </div>
           {onLeaderboard && (
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
-              <button
-                onPointerDown={(e) => { e.preventDefault(); onLeaderboard(); }}
-                style={{
-                  padding: '10px 32px',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  backgroundColor: 'transparent',
-                  color: '#9ca3af',
-                  border: '2px solid #374151',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  touchAction: 'manipulation',
-                  userSelect: 'none',
-                  WebkitUserSelect: 'none',
-                  minHeight: '44px',
-                }}
-              >
-                查看排行榜
-              </button>
-            </div>
+            <button
+              onPointerDown={(e) => { e.preventDefault(); onLeaderboard(); }}
+              style={{
+                padding: '10px 32px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                backgroundColor: 'transparent',
+                color: '#9ca3af',
+                border: '2px solid #374151',
+                borderRadius: '10px',
+                cursor: 'pointer',
+                touchAction: 'manipulation',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                minHeight: '44px',
+              }}
+            >
+              查看排行榜
+            </button>
           )}
         </div>
       )}

@@ -54,3 +54,8 @@ body {
   0%, 100% { box-shadow: 0 0 6px currentColor; }
   50% { box-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
