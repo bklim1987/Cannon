@@ -162,9 +162,9 @@ export default function Menu({ onStartSolo, onStartDuo, onLeaderboard }) {
       gap: '20px',
     }}>
       <h1 style={{ fontSize: '48px', fontWeight: 'bold', color: '#fbbf24' }}>
-        数字大炮
+        因数爆破
       </h1>
-      <p style={{ fontSize: '16px', color: '#9ca3af' }}>Number Cannon</p>
+      <p style={{ fontSize: '16px', color: '#9ca3af' }}>Factor Boom!</p>
 
       <div style={{
         maxWidth: '500px',

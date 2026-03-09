@@ -1,4 +1,4 @@
-# 数字大炮 (Number Cannon)
+# 因数爆破 (Factor Boom!)
 
 A math educational game built with React + Vite, supporting both single-player and two-player modes.
 
