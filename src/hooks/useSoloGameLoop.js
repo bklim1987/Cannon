@@ -230,6 +230,9 @@ export function useSoloGameLoop(duration, onEnd) {
           p.monsters.push(big);
         }
       } else {
+        if (target.type === 'boss') {
+          target.fallMs = 3000;
+        }
         playHit('A');
       }
     } else {
@@ -239,6 +242,13 @@ export function useSoloGameLoop(duration, onEnd) {
       p.mult = 1;
       p.locks += 1;
       p.missFlash = 500;
+      if (target.type === 'boss') {
+        if (target.fallMs >= 3000) {
+          target.fallMs = 2000;
+        } else if (target.fallMs >= 2000) {
+          target.fallMs = 1000;
+        }
+      }
       playMiss('A');
     }
   }, []);
