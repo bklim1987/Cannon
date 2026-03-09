@@ -77,6 +77,33 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
     >
       {rows}
 
+      {dims.w > 0 && (() => {
+        const cannonX = (cannon + 0.5) * cellW;
+        const activeInCol = monsters.filter(m => m.col === cannon && !m.dying);
+        let targetY;
+        if (activeInCol.length > 0) {
+          const lowest = activeInCol.reduce((a, b) => a.row > b.row ? a : b);
+          targetY = (lowest.row + 0.5) * cellH;
+        } else {
+          targetY = 0;
+        }
+        const laserHeight = dims.h - targetY;
+        return (
+          <div style={{
+            position: 'absolute',
+            left: cannonX - 1,
+            top: targetY,
+            width: '2px',
+            height: `${laserHeight}px`,
+            backgroundColor: playerColor,
+            opacity: 0.5,
+            boxShadow: `0 0 6px 2px ${playerColor}, 0 0 12px 4px ${playerColor}40`,
+            pointerEvents: 'none',
+            zIndex: 2,
+          }} />
+        );
+      })()}
+
       {dims.w > 0 && monsters.map(m => (
         <div
           key={m.id}
