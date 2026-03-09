@@ -16,15 +16,16 @@ export function createMonster(type, existingMonsters) {
     value *= p;
   }
 
-  const occupiedCols = new Set();
+  const blockedCols = new Set();
   for (const m of existingMonsters) {
-    if (m.row === 0) occupiedCols.add(m.col);
+    if (m.row === 0) blockedCols.add(m.col);
+    if (m.dying && m.row <= 1) blockedCols.add(m.col);
   }
 
   let col;
   const freeCols = [];
   for (let c = 0; c < COLS; c++) {
-    if (!occupiedCols.has(c)) freeCols.push(c);
+    if (!blockedCols.has(c)) freeCols.push(c);
   }
 
   if (freeCols.length > 0) {

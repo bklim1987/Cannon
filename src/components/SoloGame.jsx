@@ -7,7 +7,7 @@ import GameGrid from './GameGrid.jsx';
 import PrimeButton from './PrimeButton.jsx';
 import Timer from './Timer.jsx';
 
-const SOLO_STAT_LABELS = ['击杀', '最高连击', '漏掉', '射错'];
+const SOLO_STAT_LABELS = ['击杀', '最高连击', '漏掉', '误击'];
 const SOLO_STAT_KEYS = ['kills', 'maxCombo', 'missed', 'locks'];
 
 function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
