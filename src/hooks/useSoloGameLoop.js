@@ -14,10 +14,12 @@ function createPlayerState() {
     locked: false,
     lockAcc: 0,
     kills: 0,
+    killDetail: { normal: { small: 0, big: 0, boss: 0 }, combo: { small: 0, big: 0, boss: 0 } },
     spawnAcc: 0,
     nextBigAt: 3,
     nextBossAt: 10,
     missed: 0,
+    missDetail: { small: 0, big: 0, boss: 0 },
     locks: 0,
     missFlash: 0,
     escapeEffects: [],
@@ -107,6 +109,7 @@ export function useSoloGameLoop(duration, onEnd) {
         if (nextRow >= ROWS) {
           p.score -= m.pts;
           p.missed += 1;
+          p.missDetail[m.type] += 1;
           p.escapeEffects.push({
             id: Date.now() + Math.random(),
             col: m.col,
@@ -215,6 +218,8 @@ export function useSoloGameLoop(duration, onEnd) {
         const earned = Math.round(target.pts * p.mult);
         p.score += earned;
         p.kills += 1;
+        const multKey = p.mult > 1 ? 'combo' : 'normal';
+        p.killDetail[multKey][target.type] += 1;
         target.dying = true;
         target.dyingAcc = 0;
         playKill('A', target.type === 'boss');

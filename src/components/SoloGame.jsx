@@ -7,8 +7,20 @@ import GameGrid from './GameGrid.jsx';
 import PrimeButton from './PrimeButton.jsx';
 import Timer from './Timer.jsx';
 
-const SOLO_STAT_LABELS = ['击杀', '最高连击', '漏掉', '误击'];
-const SOLO_STAT_KEYS = ['kills', 'maxCombo', 'missed', 'locks'];
+function formatDetail(detail) {
+  return `${detail.small}+${detail.big}+${detail.boss}`;
+}
+
+function buildSoloStats(player) {
+  const kd = player.killDetail || { normal: { small: 0, big: 0, boss: 0 }, combo: { small: 0, big: 0, boss: 0 } };
+  const md = player.missDetail || { small: 0, big: 0, boss: 0 };
+  return [
+    { label: 'x1.0击杀', value: formatDetail(kd.normal) },
+    { label: 'x1.5击杀', value: formatDetail(kd.combo) },
+    { label: '逃脱', value: formatDetail(md) },
+    { label: '误击', value: player.locks },
+  ];
+}
 
 function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
   const [name, setName] = useState('');
@@ -26,7 +38,7 @@ function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
   const [showButtons, setShowButtons] = useState(false);
 
   useEffect(() => {
-    if (revealStep < SOLO_STAT_LABELS.length) {
+    if (revealStep < 4) {
       const timer = setTimeout(() => setRevealStep(s => s + 1), 500);
       return () => clearTimeout(timer);
     }
@@ -82,17 +94,18 @@ function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
         <div style={{ fontSize: '48px', fontWeight: 'bold', color: '#fff', marginBottom: '12px' }}>
           {player.score}
         </div>
-        <div style={{ fontSize: '13px', color: '#9ca3af', lineHeight: 1.8 }}>
-          {SOLO_STAT_LABELS.map((label, i) => (
-            <div key={label} style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
-              <span>{label}:</span>
+        <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '4px' }}>小怪+大怪+BOSS</div>
+        <div style={{ fontSize: '12px', color: '#9ca3af', lineHeight: 1.8 }}>
+          {buildSoloStats(player).map((s, i) => (
+            <div key={s.label} style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
+              <span>{s.label}:</span>
               <span style={{
                 opacity: i < revealStep ? 1 : 0,
                 transition: 'opacity 0.3s ease-in',
                 fontWeight: 'bold',
                 color: '#e5e7eb',
               }}>
-                {player[SOLO_STAT_KEYS[i]]}
+                {s.value}
               </span>
             </div>
           ))}

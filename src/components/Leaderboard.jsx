@@ -116,6 +116,11 @@ export default function Leaderboard({ onBack }) {
               <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>
                 击杀:{record.kills} 连击:{record.maxCombo} 漏:{record.missed}
               </div>
+              {record.date && (
+                <div style={{ fontSize: '10px', color: '#4b5563', marginTop: '1px' }}>
+                  {new Date(record.date).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                </div>
+              )}
             </div>
             <div style={{
               fontSize: '20px',

@@ -15,8 +15,9 @@ const inputStyle = {
   outline: 'none',
 };
 
-const STAT_LABELS = ['击杀', '最高连击', '漏掉', '误击'];
-const STAT_KEYS = ['kills', 'maxCombo', 'missed', 'locks'];
+function formatDetail(detail) {
+  return `${detail.small}+${detail.big}+${detail.boss}`;
+}
 
 function StatLine({ label, value, visible }) {
   return (
@@ -53,8 +54,9 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
     }
   }, []);
 
+  const STAT_COUNT = 4;
   useEffect(() => {
-    if (revealStep < STAT_LABELS.length) {
+    if (revealStep < STAT_COUNT) {
       const timer = setTimeout(() => setRevealStep(s => s + 1), 500);
       return () => clearTimeout(timer);
     }
@@ -84,6 +86,17 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
     { side: 'A', name: editNameA, setName: setEditNameA, player: playerA, color: COLORS.playerA },
     { side: 'B', name: editNameB, setName: setEditNameB, player: playerB, color: COLORS.playerB },
   ];
+
+  function buildStats(player) {
+    const kd = player.killDetail || { normal: { small: 0, big: 0, boss: 0 }, combo: { small: 0, big: 0, boss: 0 } };
+    const md = player.missDetail || { small: 0, big: 0, boss: 0 };
+    return [
+      { label: 'x1.0击杀', value: formatDetail(kd.normal) },
+      { label: 'x1.5击杀', value: formatDetail(kd.combo) },
+      { label: '逃脱', value: formatDetail(md) },
+      { label: '误击', value: player.locks },
+    ];
+  }
 
   return (
     <div style={{
@@ -116,6 +129,7 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
       <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
         {cards.map(({ side, name, setName, player, color }) => {
           const isWinner = winner === side;
+          const stats = buildStats(player);
           return (
             <div key={side} style={{
               padding: '20px',
@@ -143,9 +157,10 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
               <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#fff', marginBottom: '12px' }}>
                 {player.score}
               </div>
-              <div style={{ fontSize: '13px', color: '#9ca3af', lineHeight: 1.8 }}>
-                {STAT_LABELS.map((label, i) => (
-                  <StatLine key={label} label={label} value={player[STAT_KEYS[i]]} visible={i < revealStep} />
+              <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '4px' }}>小怪+大怪+BOSS</div>
+              <div style={{ fontSize: '12px', color: '#9ca3af', lineHeight: 1.8 }}>
+                {stats.map((s, i) => (
+                  <StatLine key={s.label} label={s.label} value={s.value} visible={i < revealStep} />
                 ))}
               </div>
             </div>

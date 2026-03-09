@@ -3,10 +3,10 @@ import { MONSTER_TYPES } from '../utils/constants.js';
 function getFontSize(value, type) {
   const digits = String(value).length;
   if (type === 'boss') {
-    if (digits <= 2) return '22px';
-    if (digits === 3) return '17px';
-    if (digits === 4) return '14px';
-    return '11px';
+    if (digits <= 2) return '26px';
+    if (digits === 3) return '20px';
+    if (digits === 4) return '16px';
+    return '14px';
   }
   if (type === 'big') {
     if (digits <= 2) return '20px';
