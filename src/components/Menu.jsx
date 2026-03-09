@@ -174,8 +174,8 @@ export default function Menu({ onStartSolo, onStartDuo, onLeaderboard }) {
         color: '#d1d5db',
       }}>
         <p>🎯 点击列移动大炮</p>
-        <p>🔢 按质数按钮射击怪物</p>
-        <p>❌ 射错将锁定按钮1秒</p>
+        <p>🔢 点击质数按钮射击怪物</p>
+        <p>❌ 误击将封锁操作1秒</p>
         <p>🔥 连续命中10次 → 1.5x 得分!</p>
       </div>
 
