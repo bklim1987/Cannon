@@ -26,8 +26,10 @@ function createPlayerState() {
     escapeEffects: [],
   };
 
-  const m = createMonster('small', p.monsters);
-  p.monsters.push(m);
+  for (let i = 0; i < 2; i++) {
+    const m = createMonster('small', p.monsters);
+    p.monsters.push(m);
+  }
 
   return p;
 }
