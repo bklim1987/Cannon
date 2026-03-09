@@ -208,6 +208,9 @@ export function useSoloGameLoop(duration, onEnd) {
     if (target.value % prime === 0) {
       target.value = target.value / prime;
       target.hitFlash = 300;
+      if (target.type === 'boss' && target.value > 1) {
+        target.fallMs = 3000;
+      }
       p.combo += 1;
       if (p.combo > p.maxCombo) p.maxCombo = p.combo;
       if (p.combo >= COMBO_THRESHOLD) {
@@ -244,6 +247,13 @@ export function useSoloGameLoop(duration, onEnd) {
       p.mult = 1;
       p.locks += 1;
       p.missFlash = 500;
+      if (target.type === 'boss') {
+        if (target.fallMs >= 3000) {
+          target.fallMs = 2000;
+        } else if (target.fallMs >= 2000) {
+          target.fallMs = 1000;
+        }
+      }
       playMiss('A');
     }
   }, []);
