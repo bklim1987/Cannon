@@ -76,7 +76,7 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
 
       {dims.w > 0 && (() => {
         const cannonX = (cannon + 0.5) * cellW;
-        const activeInCol = monsters.filter(m => m.col === cannon && !m.dying && m.row > 0);
+        const activeInCol = monsters.filter(m => m.col === cannon && !m.dying);
         let targetY;
         if (activeInCol.length > 0) {
           const lowest = activeInCol.reduce((a, b) => a.row > b.row ? a : b);
@@ -101,7 +101,7 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
         );
       })()}
 
-      {dims.w > 0 && monsters.filter(m => m.row > 0 || m.dying).map(m => (
+      {dims.w > 0 && monsters.map(m => (
         <div
           key={m.id}
           style={{
