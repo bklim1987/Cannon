@@ -92,12 +92,15 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
       backgroundColor: COLORS.bg,
       color: '#e5e7eb',
-      gap: '20px',
-      padding: '20px',
-      position: 'relative',
+      gap: '16px',
+      paddingTop: '5vh',
+      paddingBottom: '20px',
+      paddingLeft: '20px',
+      paddingRight: '20px',
+      overflow: 'auto',
     }}>
       <h1 style={{ fontSize: '36px', color: '#fbbf24' }}>⏱ 时间到！</h1>
 
@@ -152,10 +155,6 @@ export default function Results({ playerA, playerB, nameA, nameB, isTournament, 
 
       {showButtons && !isTournament && (
         <div style={{
-          position: 'absolute',
-          bottom: '20px',
-          left: 0,
-          right: 0,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',

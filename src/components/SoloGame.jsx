@@ -56,12 +56,15 @@ function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
       backgroundColor: COLORS.bg,
       color: '#e5e7eb',
       gap: '16px',
-      padding: '20px',
-      position: 'relative',
+      paddingTop: '8vh',
+      paddingBottom: '20px',
+      paddingLeft: '20px',
+      paddingRight: '20px',
+      overflow: 'auto',
     }}>
       <h1 style={{ fontSize: '32px', color: '#fbbf24' }}>挑战结束！</h1>
 
@@ -98,10 +101,6 @@ function SoloResults({ player, onRestart, onBack, onLeaderboard }) {
 
       {showButtons && (
         <div style={{
-          position: 'absolute',
-          bottom: '20px',
-          left: 0,
-          right: 0,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
