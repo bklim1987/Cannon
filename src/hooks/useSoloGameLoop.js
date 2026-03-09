@@ -22,6 +22,7 @@ function createPlayerState() {
     missDetail: { small: 0, big: 0, boss: 0 },
     locks: 0,
     missFlash: 0,
+    screenShake: 0,
     escapeEffects: [],
   };
 
@@ -138,6 +139,10 @@ export function useSoloGameLoop(duration, onEnd) {
       p.missFlash = Math.max(0, p.missFlash - dt);
     }
 
+    if (p.screenShake > 0) {
+      p.screenShake = Math.max(0, p.screenShake - dt);
+    }
+
     for (let i = p.escapeEffects.length - 1; i >= 0; i--) {
       p.escapeEffects[i].acc += dt;
       if (p.escapeEffects[i].acc >= 800) {
@@ -210,6 +215,7 @@ export function useSoloGameLoop(duration, onEnd) {
       target.hitFlash = 300;
       if (target.type === 'boss' && target.value > 1) {
         target.fallMs = 3000;
+        target.bossAngered = 0;
       }
       p.combo += 1;
       if (p.combo > p.maxCombo) p.maxCombo = p.combo;
@@ -253,6 +259,8 @@ export function useSoloGameLoop(duration, onEnd) {
         } else if (target.fallMs >= 2000) {
           target.fallMs = 1000;
         }
+        target.bossAngered = (target.bossAngered || 0) + 1;
+        p.screenShake = 400;
       }
       playMiss('A');
     }

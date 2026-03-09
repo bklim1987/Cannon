@@ -128,7 +128,11 @@ function BossMonster({ monster, config, isFlashing, isDying }) {
       position: 'relative',
       animation: isDying
         ? 'killFlash 400ms ease-out forwards'
-        : 'bossFlicker 0.8s step-end infinite',
+        : monster.bossAngered >= 2
+          ? 'bossFlickerFrantic 0.2s step-end infinite'
+          : monster.bossAngered === 1
+            ? 'bossFlickerFast 0.4s step-end infinite'
+            : 'bossFlicker 0.8s step-end infinite',
       transition: isDying ? 'none' : 'background-color 0.1s',
     }}>
       <div style={{

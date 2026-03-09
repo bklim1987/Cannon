@@ -71,6 +71,7 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
       position: 'relative',
       backgroundColor: player.missFlash > 0 ? 'rgba(239,68,68,0.2)' : 'transparent',
       transition: 'background-color 0.15s',
+      animation: player.screenShake > 0 ? 'screenShake 0.4s ease-in-out' : 'none',
     }}>
       {comboJustActivated && (
         <div style={{
