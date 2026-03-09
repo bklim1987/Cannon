@@ -83,7 +83,7 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
         let targetY;
         if (activeInCol.length > 0) {
           const lowest = activeInCol.reduce((a, b) => a.row > b.row ? a : b);
-          targetY = (lowest.row + 0.5) * cellH;
+          targetY = (lowest.row + 0.8) * cellH;
         } else {
           targetY = 0;
         }
