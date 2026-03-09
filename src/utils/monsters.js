@@ -18,8 +18,7 @@ export function createMonster(type, existingMonsters) {
 
   const blockedCols = new Set();
   for (const m of existingMonsters) {
-    if (m.row === 0) blockedCols.add(m.col);
-    if (m.dying && m.row <= 1) blockedCols.add(m.col);
+    if (m.row <= 1) blockedCols.add(m.col);
   }
 
   let col;
