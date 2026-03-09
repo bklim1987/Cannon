@@ -36,8 +36,10 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
           }}
           style={{
             flex: 1,
+            margin: '2px',
             backgroundColor: COLORS.cellBg,
             border: `1px solid ${COLORS.cellBorder}`,
+            borderRadius: '6px',
             touchAction: 'manipulation',
             cursor: locked ? 'not-allowed' : 'pointer',
           }}
@@ -49,6 +51,27 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
         {cells}
       </div>
     );
+  }
+
+  const dots = [];
+  if (dims.w > 0) {
+    for (let r = 1; r < ROWS; r++) {
+      for (let c = 1; c < COLS; c++) {
+        dots.push(
+          <div key={`dot-${c}-${r}`} style={{
+            position: 'absolute',
+            left: c * cellW - 2.5,
+            top: r * cellH - 2.5,
+            width: '5px',
+            height: '5px',
+            borderRadius: '50%',
+            backgroundColor: COLORS.cellBorder,
+            pointerEvents: 'none',
+            zIndex: 3,
+          }} />
+        );
+      }
+    }
   }
 
   function setRefs(el) {
@@ -73,6 +96,7 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
       }}
     >
       {rows}
+      {dots}
 
       {dims.w > 0 && (() => {
         const cannonX = (cannon + 0.5) * cellW;
