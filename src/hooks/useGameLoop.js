@@ -21,6 +21,7 @@ function createPlayerState() {
     locks: 0,
     missFlash: 0,
     escapeEffects: [],
+    lastKillCol: -1,
   };
 
   const m = createMonster('small', p.monsters);
@@ -77,7 +78,7 @@ export function useGameLoop(duration, onEnd) {
         if (m.row === 0 && !m.dying) topOccupied.add(m.col);
       }
       if (topOccupied.size < COLS) {
-        const monster = createMonster('small', p.monsters);
+        const monster = createMonster('small', p.monsters, p.lastKillCol);
         p.monsters.push(monster);
       }
     }
@@ -144,7 +145,7 @@ export function useGameLoop(duration, onEnd) {
     }
 
     if (p.monsters.length === 0) {
-      p.monsters.push(createMonster('small', p.monsters));
+      p.monsters.push(createMonster('small', p.monsters, p.lastKillCol));
       p.spawnAcc = 0;
     }
   }
@@ -218,18 +219,19 @@ export function useGameLoop(duration, onEnd) {
         const earned = Math.round(target.pts * p.mult);
         p.score += earned;
         p.kills += 1;
+        p.lastKillCol = target.col;
         target.dying = true;
         target.dyingAcc = 0;
         playKill(side, target.type === 'boss');
 
         if (p.kills >= p.nextBossAt) {
           p.nextBossAt += 10;
-          const boss = createMonster('boss', p.monsters);
+          const boss = createMonster('boss', p.monsters, p.lastKillCol);
           p.monsters.push(boss);
         }
         if (p.kills >= p.nextBigAt) {
           p.nextBigAt += 3;
-          const big = createMonster('big', p.monsters);
+          const big = createMonster('big', p.monsters, p.lastKillCol);
           p.monsters.push(big);
         }
       } else {
