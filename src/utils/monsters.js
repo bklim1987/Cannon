@@ -6,7 +6,7 @@ function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-export function createMonster(type, existingMonsters, avoidCol = -1) {
+export function createMonster(type, existingMonsters) {
   const config = MONSTER_TYPES[type];
   const factors = [];
   let value = 1;
@@ -27,14 +27,7 @@ export function createMonster(type, existingMonsters, avoidCol = -1) {
     if (!occupiedCols.has(c)) freeCols.push(c);
   }
 
-  if (freeCols.length > 1 && avoidCol >= 0) {
-    const preferred = freeCols.filter(c => c !== avoidCol);
-    if (preferred.length > 0) {
-      col = pickRandom(preferred);
-    } else {
-      col = pickRandom(freeCols);
-    }
-  } else if (freeCols.length > 0) {
+  if (freeCols.length > 0) {
     col = pickRandom(freeCols);
   } else {
     col = Math.floor(Math.random() * COLS);

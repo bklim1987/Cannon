@@ -15,7 +15,7 @@ const inputStyle = {
   outline: 'none',
 };
 
-const STAT_LABELS = ['击杀', '最高连击', '漏掉', '误击'];
+const STAT_LABELS = ['击杀', '最高连击', '漏掉', '射错'];
 const STAT_KEYS = ['kills', 'maxCombo', 'missed', 'locks'];
 
 function StatLine({ label, value, visible }) {
