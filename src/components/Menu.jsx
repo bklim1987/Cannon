@@ -173,8 +173,8 @@ export default function Menu({ onStartSolo, onStartDuo, onLeaderboard }) {
         lineHeight: 1.8,
         color: '#d1d5db',
       }}>
-        <p>🎯 点击列瞬移大炮</p>
-        <p>🔢 点击质数按钮射击怪物</p>
+        <p>🎯 点击列(column)瞬移大炮</p>
+        <p>🔢 点击质因数分解怪物</p>
         <p>❌ 误击将封锁操作1秒</p>
         <p>🔥 连续命中10次 → 1.5x 得分!</p>
       </div>
