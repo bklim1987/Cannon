@@ -26,11 +26,12 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
     const gridEl = gridRef.current;
     if (!gridEl) return;
     const rect = gridEl.getBoundingClientRect();
-    const cellW = rect.width / COLS;
-    const cellH = rect.height / ROWS;
+    const GAP = 1;
+    const cellW = (rect.width - (COLS - 1) * GAP) / COLS;
+    const cellH = (rect.height - (ROWS - 1) * GAP) / ROWS;
 
     const col = player.cannon;
-    const startX = (col + 0.5) * cellW;
+    const startX = col * (cellW + GAP) + cellW / 2;
     const startY = rect.height;
 
     const monstersInCol = player.monsters.filter(m => m.col === col && !m.dying);
@@ -38,7 +39,7 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
     if (monstersInCol.length > 0) {
       monstersInCol.sort((a, b) => b.row - a.row);
       const target = monstersInCol[0];
-      endY = (target.row + 0.5) * cellH;
+      endY = target.row * (cellH + GAP) + cellH / 2;
       hit = target.value % prime === 0;
     } else {
       endY = 0;

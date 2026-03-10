@@ -20,8 +20,11 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
     return () => obs.disconnect();
   }, []);
 
-  const cellW = dims.w / COLS;
-  const cellH = dims.h / ROWS;
+  const GAP = 1;
+  const cellW = (dims.w - (COLS - 1) * GAP) / COLS;
+  const cellH = (dims.h - (ROWS - 1) * GAP) / ROWS;
+  const colX = (c) => c * (cellW + GAP);
+  const rowY = (r) => r * (cellH + GAP);
 
   const gridCells = [];
   for (let r = 0; r < ROWS; r++) {
@@ -70,12 +73,12 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
       {gridCells}
 
       {dims.w > 0 && (() => {
-        const cannonX = (cannon + 0.5) * cellW;
+        const cannonCenter = colX(cannon) + cellW / 2;
         const activeInCol = monsters.filter(m => m.col === cannon && !m.dying);
         let targetY;
         if (activeInCol.length > 0) {
           const lowest = activeInCol.reduce((a, b) => a.row > b.row ? a : b);
-          targetY = (lowest.row + 0.8) * cellH;
+          targetY = rowY(lowest.row) + cellH * 0.8;
         } else {
           targetY = 0;
         }
@@ -83,7 +86,7 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
         return (
           <div style={{
             position: 'absolute',
-            left: cannonX - 1,
+            left: cannonCenter - 1,
             top: targetY,
             width: '2px',
             height: `${laserHeight}px`,
@@ -101,8 +104,8 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
           key={m.id}
           style={{
             position: 'absolute',
-            left: m.col * cellW,
-            top: m.row * cellH,
+            left: colX(m.col),
+            top: rowY(m.row),
             width: cellW,
             height: cellH,
             transition: 'top 300ms ease-out',
@@ -126,7 +129,7 @@ const GameGrid = forwardRef(function GameGrid({ monsters, cannon, locked, player
             key={e.id}
             style={{
               position: 'absolute',
-              left: e.col * cellW,
+              left: colX(e.col),
               bottom: 0,
               width: cellW,
               height: cellH,
