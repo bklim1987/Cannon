@@ -142,14 +142,14 @@ export default function PlayerSide({ player, name, side, playerColor, onMove, on
       />
 
       <div style={{
-        display: 'flex',
-        justifyContent: 'center',
+        display: 'grid',
+        gridTemplateColumns: `repeat(${COLS}, 1fr)`,
+        gap: '1px',
         height: '3%',
         alignItems: 'center',
       }}>
         {Array.from({ length: COLS }).map((_, c) => (
           <div key={c} style={{
-            flex: 1,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',

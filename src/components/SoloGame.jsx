@@ -403,30 +403,30 @@ export default function SoloGame({ onBack, onLeaderboard }) {
           onProjectileDone={removeProjectile}
           escapeEffects={player.escapeEffects}
         />
-      </div>
 
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        height: '24px',
-        alignItems: 'center',
-      }}>
-        {Array.from({ length: COLS }).map((_, c) => (
-          <div key={c} style={{
-            flex: 1,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            color: c === player.cannon ? COLORS.playerA : 'transparent',
-          }}>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="24" height="24" style={{ filter: c === player.cannon ? 'drop-shadow(0px 0px 4px currentColor)' : 'none' }}>
-              <rect x="26" y="16" width="12" height="32" fill="none" stroke="currentColor" strokeWidth="3" rx="2"/>
-              <path d="M22 16 L42 16 L42 8 L22 8 Z" fill="currentColor" rx="2"/>
-              <path d="M14 56 L50 56 L44 40 L20 40 Z" fill="none" stroke="currentColor" strokeWidth="3" strokeLinejoin="round"/>
-              <rect x="28" y="46" width="8" height="6" fill="currentColor" rx="1"/>
-            </svg>
-          </div>
-        ))}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${COLS}, 1fr)`,
+          gap: '1px',
+          height: '24px',
+          alignItems: 'center',
+        }}>
+          {Array.from({ length: COLS }).map((_, c) => (
+            <div key={c} style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              color: c === player.cannon ? COLORS.playerA : 'transparent',
+            }}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="24" height="24" style={{ filter: c === player.cannon ? 'drop-shadow(0px 0px 4px currentColor)' : 'none' }}>
+                <rect x="26" y="16" width="12" height="32" fill="none" stroke="currentColor" strokeWidth="3" rx="2"/>
+                <path d="M22 16 L42 16 L42 8 L22 8 Z" fill="currentColor" rx="2"/>
+                <path d="M14 56 L50 56 L44 40 L20 40 Z" fill="none" stroke="currentColor" strokeWidth="3" strokeLinejoin="round"/>
+                <rect x="28" y="46" width="8" height="6" fill="currentColor" rx="1"/>
+              </svg>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div style={{
